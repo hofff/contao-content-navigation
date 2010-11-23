@@ -45,19 +45,15 @@ class ArticleNavigation extends Frontend {
 	 * The database result of content elements.
 	 * @param integer $intCurrentLevel
 	 * The current heading level.
-	 * @param boolean $boolSkip
-	 * If skip is true, the current row of $objCte will be reused, instead of going to the next row.
 	 * @return mixed
 	 * An structured array of the headings.
 	 */
-	protected function collect(Database_Result $objCte, $intMinLevel = 1, $intMaxLevel = 6, $intCurrentLevel = 1, $boolSkip = false) {
+	protected function collect(Database_Result $objCte, $intMinLevel = 1, $intMaxLevel = 6, $intCurrentLevel = 1) {
 		$arrItems = array();
 		$objPage = false;
 		$intArticleId = 0;
-		while ($boolSkip || $objCte->next())
+		while ($objCte->next())
 		{
-			$boolSkip = false;
-			
 			// get the page object of the article
 			if ($intArticleId != $objCte->pid)
 			{
@@ -98,16 +94,14 @@ class ArticleNavigation extends Frontend {
 					// go down if the level should be collected
 					if ($intLevel <= $intMaxLevel)
 					{
-						$arrSubitems = $this->collect($objCte, $intMinLevel, $intMaxLevel, $intCurrentLevel + 1, true);
+						$objCte->prev();
+						$arrSubitems = $this->collect($objCte, $intMinLevel, $intMaxLevel, $intCurrentLevel + 1);
 						if (count($arrItems))
 						{
 							$arrItems[count($arrItems)-1]['subitems'] = $arrSubitems;
 						} else {
 							$arrItems = $arrSubitems;
 						}
-						// if subitems where found, skip the $objCte->next() call,
-						// because this is done in the lower level
-						$boolSkip = count($arrSubitems) > 0;
 					}
 					
 					// skip all items, below the max level
@@ -115,10 +109,10 @@ class ArticleNavigation extends Frontend {
 					{
 						while ($objCte->next())
 						{
-							$boolSkip = true;
 							$strHeadline = unserialize($objCte->headline);
 							$intLevel = intval(substr($strHeadline['unit'], 1));
 							if ($intLevel <= $intMaxLevel) {
+								$objCte->prev();
 								break;
 							}
 						}
@@ -128,6 +122,7 @@ class ArticleNavigation extends Frontend {
 				// this element is from an upper level
 				elseif ($intLevel < $intCurrentLevel)
 				{
+					$objCte->prev();
 					// just break and return to the upper level
 					break;
 				}
@@ -141,10 +136,11 @@ class ArticleNavigation extends Frontend {
 						$intLevel = intval(substr($strHeadline['unit'], 1));
 						if ($intLevel >= $intMinLevel)
 						{
-							$arrSubitems = $this->collect($objCte, $intMinLevel, $intMaxLevel, $intCurrentLevel + 1, true);
+							$objCte->prev();
+							$arrSubitems = $this->collect($objCte, $intMinLevel, $intMaxLevel, $intCurrentLevel + 1);
 							if (count($arrSubitems))
 							{
-								$boolSkip = true;
+								$objCte->prev();
 								$arrItems = array_merge(
 									$arrItems,
 									$arrSubitems
