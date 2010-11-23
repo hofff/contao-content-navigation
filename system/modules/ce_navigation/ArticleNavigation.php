@@ -49,7 +49,7 @@ class ArticleNavigation extends Frontend {
 	 * @return mixed
 	 * An structured array of the headings.
 	 */
-	protected function collect(Database_Result &$objCte, $intCurrentLevel = 1, $boolSkip = false) {
+	protected function collect(Database_Result $objCte, $intCurrentLevel = 1, $boolSkip = false) {
 		$arrItems = array();
 		$objPage = false;
 		$intArticleId = 0;
