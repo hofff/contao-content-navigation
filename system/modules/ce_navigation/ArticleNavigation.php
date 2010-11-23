@@ -42,106 +42,105 @@ class ArticleNavigation extends Frontend {
 	 * 
 	 * @param Database_Result $objCte
 	 * The database result of content elements.
-	 * @param integer $currentLevel
+	 * @param integer $intCurrentLevel
 	 * The current heading level.
-	 * @param boolean $skip
+	 * @param boolean $boolSkip
 	 * If skip is true, the current row of $objCte will be reused, instead of going to the next row.
 	 * @return mixed
 	 * An structured array of the headings.
 	 */
-	protected function collect(Database_Result $objCte, $currentLevel = 1, $skip = false) {
-		$items = array();
+	protected function collect(Database_Result &$objCte, $intCurrentLevel = 1, $boolSkip = false) {
+		$arrItems = array();
 		$objPage = false;
-		$articleID = 0;
-		while ($skip || $objCte->next())
+		$intArticleId = 0;
+		while ($boolSkip || $objCte->next())
 		{
-			if ($articleID != $objCte->pid) {
+			if ($intArticleId != $objCte->pid) {
 				$objPage = $this->Database->prepare("SELECT p.* FROM tl_page p INNER JOIN tl_article a ON a.pid = p.id WHERE a.id = ?")
-										  ->execute($articleID = $objCte->pid);
+										  ->execute($intArticleId = $objCte->pid);
 				if (!$objPage->next()) {
 					$objPage = false;
 					continue;
 				}
-			} else if ($articleID == $objCte->pid && $objPage == false) {
+			} else if ($intArticleId == $objCte->pid && $objPage == false) {
 				continue;
 			}
-			$headline = unserialize($objCte->headline);
-			$cssID = unserialize($objCte->cssID);
-			if (!empty($headline['value']) && !empty($cssID[0])) {
-				$level = intval(substr($headline['unit'], 1));
-				if ($level > $currentLevel) {
-					$tmp = $this->collect(&$objCte, $currentLevel + 1, true);
-					$skip = count($tmp) > 0;
-					$items[count($items)-1]['subitems'] = $tmp;
-				} else if ($level < $currentLevel) {
+			$strHeadline = unserialize($objCte->headline);
+			$strCssId = unserialize($objCte->cssID);
+			if (!empty($strHeadline['value']) && !empty($strCssId[0])) {
+				$intLevel = intval(substr($strHeadline['unit'], 1));
+				if ($intLevel > $intCurrentLevel) {
+					$arrSubitems = $this->collect($objCte, $intCurrentLevel + 1, true);
+					$boolSkip = count($arrSubitems) > 0;
+					$arrItems[count($arrItems)-1]['subitems'] = $arrSubitems;
+				} else if ($intLevel < $intCurrentLevel) {
 					break;
 				} else {
-					$item = array_merge($objCte->row(),
+					$arrItem = array_merge($objCte->row(),
 						array(
-							'title' => $headline['value'],
-							'href' => $this->generateFrontendUrl($objPage->row()) .'#'. $cssID[0]
+							'title' => $strHeadline['value'],
+							'href' => $this->generateFrontendUrl($objPage->row()) .'#'. $strCssId[0]
 						));
-					$items[] = $item;
-					$skip = false;
+					$arrItems[] = $arrItem;
+					$boolSkip = false;
 				}
 			}
 		}
-		return $items;
+		return $arrItems;
 	}
 	
 	/**
 	 * Collect the headings from one article.
 	 * 
-	 * @param mixed $article
-	 * The article id or alias.
+	 * @param int $intArticleId
+	 * The article id.
 	 * @return mixed
 	 * An structured array of the headings.
 	 */
-	public function fromArticle($article) {
+	public function fromArticle($intArticleId) {
 		return $this->collect(
-			$this->Database->prepare("SELECT * FROM tl_content WHERE (pid=? OR alias=?)" . (!BE_USER_LOGGED_IN ? " AND invisible=''" : "") . " ORDER BY sorting")
-						   ->execute($articleID, $article));
+			$this->Database->prepare("SELECT * FROM tl_content WHERE pid=?" . (!BE_USER_LOGGED_IN ? " AND invisible=''" : "") . " ORDER BY sorting")
+						   ->execute($intArticleId));
 	}
 	
 	/**
 	 * Collect the headings from some articles.
 	 * 
-	 * @param mixed $articles
-	 * Array of ids or aliases of articles.
+	 * @param mixed $intArticleId
+	 * Array of article id's.
 	 * @return mixed
 	 * An structured array of the headings.
 	 */
-	public function fromArticles($articles) {
-		if (!count($articles))
+	public function fromArticles($intArticleIds) {
+		if (!count($intArticleIds))
 			return array();
-		$where = array();
-		$args = array();
-		foreach ($articles as $id) {
-			$where[] = 'a.id = ? OR a.alias = ?';
-			$args[] = $id; # for id
-			$args[] = $id; # for alias
+		$arrWhere = array();
+		$arrArgs = array();
+		foreach ($intArticleIds as $intId) {
+			$arrWhere[] = 'a.id = ?';
+			$arrArgs[] = $intId;
 		}
-		if (!count($where))
+		if (!count($arrWhere))
 			return array();
 		return $this->collect(
-			$this->Database->prepare("SELECT c.* FROM tl_content c INNER JOIN tl_article a ON a.id = c.pid WHERE (" . implode(" OR ", $where) . ")" . (!BE_USER_LOGGED_IN ? " AND c.invisible=''" : "") . " ORDER BY a.sorting,c.sorting")
-						   ->execute($args));
+			$this->Database->prepare("SELECT c.* FROM tl_content c INNER JOIN tl_article a ON a.id = c.pid WHERE (" . implode(" OR ", $arrWhere) . ")" . (!BE_USER_LOGGED_IN ? " AND c.invisible=''" : "") . " ORDER BY a.sorting,c.sorting")
+						   ->execute($arrArgs));
 	}
 	
 	/**
 	 * Collect the headings from a column.
 	 * 
-	 * @param integer $pageID
+	 * @param integer $intPageId
 	 * The id of the page.
-	 * @param string $column
+	 * @param string $strColumn
 	 * The name of the column.
 	 * @return mixed
 	 * An structured array of the headings.
 	 */
-	public function fromColumn($pageID, $column = 'main') {
+	public function fromColumn($intPageId, $strColumn = 'main') {
 		return $this->collect(
 			$this->Database->prepare("SELECT c.* FROM tl_content c INNER JOIN tl_article a ON a.id = c.pid WHERE a.pid = ? AND a.inColumn = ? ORDER BY a.sorting,c.sorting")
-						   ->execute($pageID, $column));
+						   ->execute($intPageId, $strColumn));
 	}
 	
 }

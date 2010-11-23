@@ -44,38 +44,38 @@ class ContentNavigation extends ContentElement
 	 */
 	protected $strTemplate = 'mod_ce_navigation';
 	
-	protected function flatten(&$items, $level = 1) {
-		if (!count($items))
+	protected function flatten(&$arrItems, $intLevel = 1) {
+		if (!count($arrItems))
 			return '';
-		foreach ($items as &$item) {
-			if (isset($item['subitems'])) {
+		foreach ($arrItems as &$arrItem) {
+			if (isset($arrItem['subitems'])) {
 				
-				$item['subitems'] = $this->flatten($item['subitems'], $level + 1);
+				$arrItem['subitems'] = $this->flatten($arrItem['subitems'], $intLevel + 1);
 			}
-			$item['class'] = '';
+			$arrItem['class'] = '';
 		}
 		
-		$items[0]['class'] = 'first';
-		$items[count($items)-1]['class'] = 'last';
+		$arrItems[0]['class'] = 'first';
+		$arrItems[count($arrItems)-1]['class'] = 'last';
 		
 		$tpl = new FrontendTemplate('ce_navigation');
-		$tpl->items = $items;
-		$tpl->level = $level;
+		$tpl->items = $arrItems;
+		$tpl->level = $intLevel;
 		return $tpl->parse();
 	}
 	
 	protected function compile()
 	{
 		global $objPage;
+		$this->import('ArticleNavigation');
 		
-		$an = new ArticleNavigation();
 		if (is_numeric($this->navigationArticle)) {
-			$items = $an->fromArticle($this->navigationArticle);
+			$arrItems = $this->ArticleNavigation->fromArticle($this->navigationArticle);
 		} else {
-			$items = $an->fromColumn($objPage->id, $this->navigationArticle);
+			$arrItems = $this->ArticleNavigation->fromColumn($objPage->id, $this->navigationArticle);
 		}
 		
-		$this->Template->items = $this->flatten($items);
+		$this->Template->items = $this->flatten($arrItems);
 	}
 	
 }

@@ -66,12 +66,12 @@ class tl_content_navigation extends Backend
 	{
 		$this->loadLanguageFile('tl_article');
 		
-		$columns = array();
-		foreach (array('header', 'left', 'main', 'right', 'footer') as $s) {
-			$columns[$s] = $GLOBALS['TL_LANG']['tl_article'][$s];
+		$arrColumns = array();
+		foreach (array('header', 'left', 'main', 'right', 'footer') as $strColumn) {
+			$arrColumns[$strColumn] = $GLOBALS['TL_LANG']['tl_article'][$strColumn];
 		}
 		
-		$articles = array();
+		$arrArticles = array();
 		$objArticles = $this->Database->prepare('SELECT a.id,a.title,a.inColumn FROM tl_article a '.
 												'INNER JOIN tl_article b ON a.pid = b.pid '.
 												'INNER JOIN tl_content c ON c.pid = b.id '.
@@ -79,15 +79,15 @@ class tl_content_navigation extends Backend
 									  ->execute($dc->id);
 		while ($objArticles->next()) {
 			if (isset($GLOBALS['TL_LANG']['tl_article'][$objArticles->inColumn]))
-				$column = $GLOBALS['TL_LANG']['tl_article'][$objArticles->inColumn];
+				$strColumn = $GLOBALS['TL_LANG']['tl_article'][$objArticles->inColumn];
 			else
-				$column = $objArticles->inColumn;
-			$articles[$objArticles->id] = sprintf('%s (%s)', $objArticles->title, $column);
+				$strColumn = $objArticles->inColumn;
+			$arrArticles[$objArticles->id] = sprintf('%s (%s)', $objArticles->title, $strColumn);
 		}
 		
 		return array(
-			$GLOBALS['TL_LANG']['tl_content']['navigationArticleColumn'] => $columns,
-			$GLOBALS['TL_LANG']['tl_content']['navigationArticlePage'] => $articles
+			$GLOBALS['TL_LANG']['tl_content']['navigationArticleColumn'] => $arrColumns,
+			$GLOBALS['TL_LANG']['tl_content']['navigationArticlePage'] => $arrArticles
 		);
 	}
 	
