@@ -28,8 +28,7 @@
  */
 
 
-$GLOBALS['TL_DCA']['tl_content']['palettes']['spacer']     = '{type_legend},type,anchor;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
-$GLOBALS['TL_DCA']['tl_content']['palettes']['navigation'] = '{type_legend},type,headline,navigationArticle;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
+$GLOBALS['TL_DCA']['tl_content']['palettes']['navigation'] = '{type_legend},type,headline,navigationArticle,navigationMinLevel,navigationMaxLevel;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['navigationArticle'] = array
 (
@@ -37,15 +36,21 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['navigationArticle'] = array
 	'default'                 => 'main',
 	'inputType'               => 'select',
 	'options_callback'        => array('tl_content_navigation', 'getArticles'),
-	'eval'                    => array('mandatory'=>true, 'tl_class'=>'w50')
+	'eval'                    => array('mandatory'=>true)
 );
 
-$GLOBALS['TL_DCA']['tl_content']['fields']['anchor'] = array
+$GLOBALS['TL_DCA']['tl_content']['fields']['navigationMinLevel'] = array
 (
-	'label'                   => &$GLOBALS['TL_LANG']['tl_content']['anchor'],
-	'default'                 => 'top',
+	'label'                   => &$GLOBALS['TL_LANG']['tl_content']['navigationMinLevel'],
 	'inputType'               => 'text',
-	'eval'                    => array('mandatory'=>true, 'tl_class'=>'w50')
+	'eval'                    => array('tl_class'=>'w50', 'rgxp'=>'digit')
+);
+
+$GLOBALS['TL_DCA']['tl_content']['fields']['navigationMaxLevel'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_content']['navigationMaxLevel'],
+	'inputType'               => 'text',
+	'eval'                    => array('tl_class'=>'w50', 'rgxp'=>'digit')
 );
 
 /**

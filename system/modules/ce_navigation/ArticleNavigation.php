@@ -56,6 +56,7 @@ class ArticleNavigation extends Frontend {
 		$intArticleId = 0;
 		while ($boolSkip || $objCte->next())
 		{
+			$boolSkip = false;
 			if ($intArticleId != $objCte->pid) {
 				$objPage = $this->Database->prepare("SELECT p.* FROM tl_page p INNER JOIN tl_article a ON a.pid = p.id WHERE a.id = ?")
 										  ->execute($intArticleId = $objCte->pid);

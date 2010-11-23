@@ -46,7 +46,7 @@ class ContentNavigation extends ContentElement
 	protected $strTemplate = 'mod_ce_navigation';
 	
 	protected function flatten(&$arrItems, $intLevel = 1) {
-		if (!count($arrItems))
+		if (!count($arrItems) || $this->navigationMaxLevel < $intLevel)
 			return '';
 		foreach ($arrItems as &$arrItem) {
 			if (isset($arrItem['subitems'])) {
@@ -56,13 +56,21 @@ class ContentNavigation extends ContentElement
 			$arrItem['class'] = '';
 		}
 		
-		$arrItems[0]['class'] = 'first';
-		$arrItems[count($arrItems)-1]['class'] = 'last';
+		if ($intLevel > $this->navigationMinLevel) {
+			$arrItems[0]['class'] = 'first';
+			$arrItems[count($arrItems)-1]['class'] = 'last';
 		
-		$tpl = new FrontendTemplate('ce_navigation');
-		$tpl->items = $arrItems;
-		$tpl->level = $intLevel;
-		return $tpl->parse();
+			$tpl = new FrontendTemplate('ce_navigation');
+			$tpl->items = $arrItems;
+			$tpl->level = $intLevel;
+			return $tpl->parse();
+		} else {
+			$strItems = '';
+			foreach ($arrItems as &$arrItem) {
+				$strItems .= $arrItem['subitems'];
+			}
+			return $strItems;
+		}
 	}
 	
 	protected function compile()

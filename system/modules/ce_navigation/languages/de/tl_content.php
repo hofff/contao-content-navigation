@@ -34,6 +34,5 @@
 $GLOBALS['TL_LANG']['tl_content']['navigationArticle']       = array('Artikel', 'Artikel auswählen, über den die Inhaltsnavigation erstellt werden soll.');
 $GLOBALS['TL_LANG']['tl_content']['navigationArticleColumn'] = 'Artikel in Spalte';
 $GLOBALS['TL_LANG']['tl_content']['navigationArticlePage']   = 'Artikel in Seite';
-$GLOBALS['TL_LANG']['tl_content']['anchor']                  = array('Zielanker', 'Anker zu dem der "nach oben" Link springen soll.');
 
 ?>
