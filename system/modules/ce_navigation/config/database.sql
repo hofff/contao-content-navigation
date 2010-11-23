@@ -12,7 +12,7 @@
 -- 
 
 CREATE TABLE `tl_content` (
-  `navigationArticle` varchar(10) NOT NULL default '',
-  `navigationMinLevel` varchar(10) NOT NULL default '0',
-  `navigationMaxLevel` varchar(10) NOT NULL default '0',
+  `navigation_article` varchar(10) NOT NULL default '',
+  `navigation_min_level` varchar(10) NOT NULL default '0',
+  `navigation_max_level` varchar(10) NOT NULL default '0',
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
