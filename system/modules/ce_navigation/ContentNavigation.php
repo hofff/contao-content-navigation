@@ -56,7 +56,7 @@ class ContentNavigation extends ContentElement
 			$arrItem['class'] = '';
 		}
 		
-		if ($intLevel > $this->navigationMinLevel) {
+		if ($intLevel > $this->navigation_min_level) {
 			$arrItems[0]['class'] = 'first';
 			$arrItems[count($arrItems)-1]['class'] = 'last';
 		
@@ -78,10 +78,10 @@ class ContentNavigation extends ContentElement
 		global $objPage;
 		$this->import('ArticleNavigation');
 		
-		if (is_numeric($this->navigationArticle)) {
-			$arrItems = $this->ArticleNavigation->fromArticle($this->navigationArticle);
+		if (is_numeric($this->navigation_article)) {
+			$arrItems = $this->ArticleNavigation->fromArticle($this->navigation_article);
 		} else {
-			$arrItems = $this->ArticleNavigation->fromColumn($objPage->id, $this->navigationArticle);
+			$arrItems = $this->ArticleNavigation->fromColumn($objPage->id, $this->navigation_article);
 		}
 		
 		$this->Template->items = $this->flatten($arrItems);

@@ -31,8 +31,8 @@
 /**
  * Fields
  */
-$GLOBALS['TL_LANG']['tl_content']['navigationArticle']       = array('Artikel', 'Artikel auswählen, über den die Inhaltsnavigation erstellt werden soll.');
-$GLOBALS['TL_LANG']['tl_content']['navigationArticleColumn'] = 'Artikel in Spalte';
-$GLOBALS['TL_LANG']['tl_content']['navigationArticlePage']   = 'Artikel in Seite';
+$GLOBALS['TL_LANG']['tl_content']['navigation_article']       = array('Artikel', 'Artikel auswählen, über den die Inhaltsnavigation erstellt werden soll.');
+$GLOBALS['TL_LANG']['tl_content']['navigation_article_column'] = 'Artikel in Spalte';
+$GLOBALS['TL_LANG']['tl_content']['navigation_article_page']   = 'Artikel in Seite';
 
 ?>
