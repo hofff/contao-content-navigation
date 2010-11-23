@@ -28,7 +28,7 @@
  */
 
 
-$GLOBALS['TL_DCA']['tl_content']['palettes']['navigation'] = '{type_legend},type,headline,navigation_article,navigation_min_level,navigationMaxLevel;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
+$GLOBALS['TL_DCA']['tl_content']['palettes']['navigation'] = '{type_legend},type,headline,navigation_article,navigation_min_level,navigation_max_level;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['navigation_article'] = array
 (
@@ -42,15 +42,19 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['navigation_article'] = array
 $GLOBALS['TL_DCA']['tl_content']['fields']['navigation_min_level'] = array
 (
 	'label'                   => &$GLOBALS['TL_LANG']['tl_content']['navigation_min_level'],
-	'inputType'               => 'text',
-	'eval'                    => array('tl_class'=>'w50', 'rgxp'=>'digit')
+	'default'                 => '1',
+	'inputType'               => 'select',
+	'options'                 => array('1', '2', '3', '4', '5', '6'),
+	'eval'                    => array('tl_class'=>'w50')
 );
 
-$GLOBALS['TL_DCA']['tl_content']['fields']['navigationMaxLevel'] = array
+$GLOBALS['TL_DCA']['tl_content']['fields']['navigation_max_level'] = array
 (
-	'label'                   => &$GLOBALS['TL_LANG']['tl_content']['navigationMaxLevel'],
-	'inputType'               => 'text',
-	'eval'                    => array('tl_class'=>'w50', 'rgxp'=>'digit')
+	'label'                   => &$GLOBALS['TL_LANG']['tl_content']['navigation_max_level'],
+	'default'                 => '6',
+	'inputType'               => 'select',
+	'options'                 => array('1', '2', '3', '4', '5', '6'),
+	'eval'                    => array('tl_class'=>'w50')
 );
 
 /**
@@ -78,11 +82,25 @@ class tl_content_navigation extends Backend
 		}
 		
 		$arrArticles = array();
-		$objArticles = $this->Database->prepare('SELECT a.id,a.title,a.inColumn FROM tl_article a '.
-												'INNER JOIN tl_article b ON a.pid = b.pid '.
-												'INNER JOIN tl_content c ON c.pid = b.id '.
-												'WHERE c.id = ? ORDER BY a.inColumn,a.sorting')
-									  ->execute($dc->id);
+		$objArticles = $this->Database->prepare('
+			SELECT
+				a.id,
+				a.title,
+				a.inColumn
+			FROM
+				tl_article a
+			INNER JOIN
+				tl_article b
+				ON a.pid = b.pid
+			INNER JOIN
+				tl_content c
+				ON c.pid = b.id
+			WHERE
+				c.id = ?
+			ORDER BY
+				a.inColumn,
+				a.sorting')
+			->execute($dc->id);
 		while ($objArticles->next()) {
 			if (isset($GLOBALS['TL_LANG']['tl_article'][$objArticles->inColumn]))
 				$strColumn = $GLOBALS['TL_LANG']['tl_article'][$objArticles->inColumn];
