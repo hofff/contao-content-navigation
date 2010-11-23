@@ -46,31 +46,22 @@ class ContentNavigation extends ContentElement
 	protected $strTemplate = 'mod_ce_navigation';
 	
 	protected function flatten(&$arrItems, $intLevel = 1) {
-		if (!count($arrItems) || $this->navigationMaxLevel < $intLevel)
+		if (!count($arrItems))
 			return '';
 		foreach ($arrItems as &$arrItem) {
 			if (isset($arrItem['subitems'])) {
-				
 				$arrItem['subitems'] = $this->flatten($arrItem['subitems'], $intLevel + 1);
 			}
 			$arrItem['class'] = '';
 		}
 		
-		if ($intLevel > $this->navigation_min_level) {
-			$arrItems[0]['class'] = 'first';
-			$arrItems[count($arrItems)-1]['class'] = 'last';
-		
-			$tpl = new FrontendTemplate('ce_navigation');
-			$tpl->items = $arrItems;
-			$tpl->level = $intLevel;
-			return $tpl->parse();
-		} else {
-			$strItems = '';
-			foreach ($arrItems as &$arrItem) {
-				$strItems .= $arrItem['subitems'];
-			}
-			return $strItems;
-		}
+		$arrItems[0]['class'] = 'first';
+		$arrItems[count($arrItems)-1]['class'] = 'last';
+	
+		$tpl = new FrontendTemplate('ce_navigation');
+		$tpl->items = $arrItems;
+		$tpl->level = $intLevel;
+		return $tpl->parse();
 	}
 	
 	protected function compile()
@@ -79,9 +70,9 @@ class ContentNavigation extends ContentElement
 		$this->import('ArticleNavigation');
 		
 		if (is_numeric($this->navigation_article)) {
-			$arrItems = $this->ArticleNavigation->fromArticle($this->navigation_article);
+			$arrItems = $this->ArticleNavigation->fromArticle($this->navigation_article, $this->navigation_min_level, $this->navigation_max_level);
 		} else {
-			$arrItems = $this->ArticleNavigation->fromColumn($objPage->id, $this->navigation_article);
+			$arrItems = $this->ArticleNavigation->fromColumn($objPage->id, $this->navigation_article, $this->navigation_min_level, $this->navigation_max_level);
 		}
 		
 		$this->Template->items = $this->flatten($arrItems);
