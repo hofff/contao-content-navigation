@@ -42,7 +42,27 @@ class ContentNavigation extends ContentElement
 	 * Template
 	 * @var string
 	 */
-	protected $strTemplate = 'ce_navigation';
+	protected $strTemplate = 'mod_ce_navigation';
+	
+	protected function flatten(&$items, $level = 1) {
+		if (!count($items))
+			return '';
+		foreach ($items as &$item) {
+			if (isset($item['subitems'])) {
+				
+				$item['subitems'] = $this->flatten($item['subitems'], $level + 1);
+			}
+			$item['class'] = '';
+		}
+		
+		$items[0]['class'] = 'first';
+		$items[count($items)-1]['class'] = 'last';
+		
+		$tpl = new FrontendTemplate('ce_navigation');
+		$tpl->items = $items;
+		$tpl->level = $level;
+		return $tpl->parse();
+	}
 	
 	protected function compile()
 	{
@@ -55,8 +75,7 @@ class ContentNavigation extends ContentElement
 			$items = $an->fromColumn($objPage->id, $this->navigationArticle);
 		}
 		
-		$this->Template->items = $items;
-		$this->Template->level = 1;
+		$this->Template->items = $this->flatten($items);
 	}
 	
 }
