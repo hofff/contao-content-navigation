@@ -19,7 +19,7 @@
  * Software Foundation website at http://www.gnu.org/licenses/.
  *
  * PHP version 5
- * @copyright  2009-2010, InfinityLabs 
+ * @copyright  InfinityLabs - Olck & Lins GbR - 2009-2010
  * @author     Tristan Lins <tristan.lins@infinitylabs.de>
  * @package    ContentNavigation 
  * @license    LGPL 
@@ -43,7 +43,7 @@ $GLOBALS['TL_DCA']['tl_content']['palettes']['navigation'] = '{type_legend},type
  * Class tl_content_navigation
  *
  * Provide miscellaneous methods that are used by the data configuration array.
- * @copyright  2009-2010, InfinityLabs 
+ * @copyright  InfinityLabs - Olck & Lins GbR - 2009-2010
  * @author     Tristan Lins <tristan.lins@infinitylabs.de>
  * @package    ContentNavigation 
  */

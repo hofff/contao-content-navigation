@@ -19,7 +19,7 @@
  * Software Foundation website at http://www.gnu.org/licenses/.
  *
  * PHP version 5
- * @copyright  2009, InfinityLabs 
+ * @copyright  InfinityLabs - Olck & Lins GbR - 2009-2010
  * @author     Tristan Lins <tristan.lins@infinitylabs.de>
  * @package    ContentNavigation 
  * @license    LGPL 
