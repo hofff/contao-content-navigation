@@ -7,11 +7,11 @@
 -- *                                                        *
 -- **********************************************************
 
-
 -- 
 -- Table `tl_content`
 -- 
 
 CREATE TABLE `tl_content` (
   `navigationArticle` varchar(10) NOT NULL default '',
+  `anchor` varchar(255) NOT NULL default '',
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

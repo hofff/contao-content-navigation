@@ -1,13 +1,13 @@
 <?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
 
 /**
- * TYPOlight webCMS
- * Copyright (C) 2005-2009 Leo Feyer
+ * TYPOlight Open Source CMS
+ * Copyright (C) 2009-2010 Leo Feyer
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation, either
- * version 2.1 of the License, or (at your option) any later version.
+ * version 3 of the License, or (at your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,7 +16,7 @@
  * 
  * You should have received a copy of the GNU Lesser General Public
  * License along with this program. If not, please visit the Free
- * Software Foundation website at http://www.gnu.org/licenses/.
+ * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
  * @copyright  InfinityLabs - Olck & Lins GbR - 2009-2010
@@ -37,7 +37,19 @@
  */
 class ArticleNavigation extends Frontend {
 	
-	protected function collect($objCte, $currentLevel = 1, $skip = false) {
+	/**
+	 * Collect the headings from content elements.
+	 * 
+	 * @param Database_Result $objCte
+	 * The database result of content elements.
+	 * @param integer $currentLevel
+	 * The current heading level.
+	 * @param boolean $skip
+	 * If skip is true, the current row of $objCte will be reused, instead of going to the next row.
+	 * @return mixed
+	 * An structured array of the headings.
+	 */
+	protected function collect(Database_Result $objCte, $currentLevel = 1, $skip = false) {
 		$items = array();
 		$objPage = false;
 		$articleID = 0;
@@ -77,24 +89,55 @@ class ArticleNavigation extends Frontend {
 		return $items;
 	}
 	
-	public function fromArticle($articleID) {
+	/**
+	 * Collect the headings from one article.
+	 * 
+	 * @param mixed $article
+	 * The article id or alias.
+	 * @return mixed
+	 * An structured array of the headings.
+	 */
+	public function fromArticle($article) {
 		return $this->collect(
-			$this->Database->prepare("SELECT * FROM tl_content WHERE pid=?" . (!BE_USER_LOGGED_IN ? " AND invisible=''" : "") . " ORDER BY sorting")
-						   ->execute($articleID));
+			$this->Database->prepare("SELECT * FROM tl_content WHERE (pid=? OR alias=?)" . (!BE_USER_LOGGED_IN ? " AND invisible=''" : "") . " ORDER BY sorting")
+						   ->execute($articleID, $article));
 	}
 	
-	public function fromArticles($articleIDs) {
-		if (!count($articleIDs))
+	/**
+	 * Collect the headings from some articles.
+	 * 
+	 * @param mixed $articles
+	 * Array of ids or aliases of articles.
+	 * @return mixed
+	 * An structured array of the headings.
+	 */
+	public function fromArticles($articles) {
+		if (!count($articles))
 			return array();
-		$ids = '';
-		foreach ($articleIDs as $id) {
-			if ($ids) $ids .= ',';
-			$ids .= intval($id);
+		$where = array();
+		$args = array();
+		foreach ($articles as $id) {
+			$where[] = 'a.id = ? OR a.alias = ?';
+			$args[] = $id; # for id
+			$args[] = $id; # for alias
 		}
+		if (!count($where))
+			return array();
 		return $this->collect(
-			$this->Database->execute("SELECT c.* FROM tl_content c INNER JOIN tl_article a ON a.id = c.pid WHERE c.pid IN ($ids)" . (!BE_USER_LOGGED_IN ? " AND c.invisible=''" : "") . " ORDER BY a.sorting,c.sorting"));
+			$this->Database->prepare("SELECT c.* FROM tl_content c INNER JOIN tl_article a ON a.id = c.pid WHERE (" . implode(" OR ", $where) . ")" . (!BE_USER_LOGGED_IN ? " AND c.invisible=''" : "") . " ORDER BY a.sorting,c.sorting")
+						   ->execute($args));
 	}
 	
+	/**
+	 * Collect the headings from a column.
+	 * 
+	 * @param integer $pageID
+	 * The id of the page.
+	 * @param string $column
+	 * The name of the column.
+	 * @return mixed
+	 * An structured array of the headings.
+	 */
 	public function fromColumn($pageID, $column = 'main') {
 		return $this->collect(
 			$this->Database->prepare("SELECT c.* FROM tl_content c INNER JOIN tl_article a ON a.id = c.pid WHERE a.pid = ? AND a.inColumn = ? ORDER BY a.sorting,c.sorting")
