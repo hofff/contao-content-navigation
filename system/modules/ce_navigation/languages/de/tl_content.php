@@ -2,7 +2,7 @@
 
 /**
  * TYPOlight Open Source CMS
- * Copyright (C) 2009-2010 Leo Feyer
+ * Copyright (C) 2005-2010 Leo Feyer
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,14 +19,17 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  InfinityLabs - Olck & Lins GbR - 2009-2010
- * @author     Tristan Lins <tristan.lins@infinitylabs.de>
- * @package    ContentNavigation 
- * @license    LGPL 
+ * @copyright  Tristan Lins 2010
+ * @author     Tristan Lins <info@infinitysoft.de>
+ * @package    ContentNavigation
+ * @license    LGPL
  * @filesource
  */
 
 
+/**
+ * Fields
+ */
 $GLOBALS['TL_LANG']['tl_content']['navigationArticle']       = array('Artikel', 'Artikel auswählen, über den die Inhaltsnavigation erstellt werden soll.');
 $GLOBALS['TL_LANG']['tl_content']['navigationArticleColumn'] = 'Artikel in Spalte';
 $GLOBALS['TL_LANG']['tl_content']['navigationArticlePage']   = 'Artikel in Seite';
