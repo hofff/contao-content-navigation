@@ -187,7 +187,7 @@ class ArticleNavigation extends Frontend {
 					tl_content
 				WHERE
 					pid=?"
-					. (!$this->Input->cookie('FE_PREVIEW') ? " AND c.invisible=''" : "") . "
+					. (!$this->Input->cookie('FE_PREVIEW') ? " AND invisible=''" : "") . "
 				ORDER BY sorting")
 			->execute($intArticleId),
 			$intMinLevel,
