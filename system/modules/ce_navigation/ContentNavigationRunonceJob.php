@@ -64,20 +64,19 @@ class ContentNavigationRunonceJob extends Backend
 			 *   navigationMinLevel -> navigation_min_level
 			 *   navigationMaxLevel -> navigation_max_level
 			 */
-			$objColumns = $this->Database->execute("SHOW COLUMNS FROM `tl_content` LIKE 'navigation%'");
-			while ($objColumns->next()) {
-				switch ($objColumns->Field) {
-				case 'navigationArticle':
-					$this->Database->execute("ALTER TABLE `tl_content` CHANGE `navigationArticle` `navigation_article` varchar(10) NOT NULL default ''");
-					break;
-	
-				case 'navigationMinLevel':
-					$this->Database->execute("ALTER TABLE `tl_content` CHANGE `navigationMinLevel` `navigation_min_level` varchar(10) NOT NULL default '0'");
-					break;
-	
-				case 'navigationMaxLevel':
-					$this->Database->execute("ALTER TABLE `tl_content` CHANGE `navigationMaxLevel` `navigation_max_level` varchar(10) NOT NULL default '0'");
-					break;
+			if ($this->Database->tableExists('tl_content'))
+			{
+				if ($this->Database->fieldExists('navigationArticle', 'tl_content'))
+				{
+					$this->Database->execute("ALTER TABLE tl_content CHANGE navigationArticle navigation_article varchar(10) NOT NULL default ''");
+				}
+				if ($this->Database->fieldExists('navigationMinLevel', 'tl_content'))
+				{
+					$this->Database->execute("ALTER TABLE tl_content CHANGE navigationMinLevel navigation_min_level varchar(10) NOT NULL default '0'");
+				}
+				if ($this->Database->fieldExists('navigationMaxLevel', 'tl_content'))
+				{
+					$this->Database->execute("ALTER TABLE tl_content CHANGE navigationMaxLevel navigation_max_level varchar(10) NOT NULL default '0'");
 				}
 			}
 			break;
