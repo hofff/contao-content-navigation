@@ -1,6 +1,10 @@
 <?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
 
 /**
+ * [ce_navigation] Content Navigation Module
+ * Copyright (C) 2010,2011 Tristan Lins
+ *
+ * Extension for:
  * Contao Open Source CMS
  * Copyright (C) 2005-2010 Leo Feyer
  *
@@ -21,10 +25,11 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  InfinitySoft 2010
+ * @copyright  InfinitySoft 2010,2011
  * @author     Tristan Lins <tristan.lins@infinitysoft.de>
  * @package    ContentNavigation
- * @license    http://opensource.org/licenses/lgpl-3.0.html
+ * @license    LGPL
+ * @filesource
  */
 
 
@@ -32,8 +37,8 @@
  * Class ArticleNavigation
  *
  * 
- * @copyright  Tristan Lins 2010
- * @author     Tristan Lins <info@infinitysoft.de>
+ * @copyright  Tristan Lins 2010,2011
+ * @author     Tristan Lins <tristan.lins@infinitysoft.de>
  * @package    ContentNavigation
  */
 class ArticleNavigation extends Frontend {

@@ -1,6 +1,10 @@
 <?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
 
 /**
+ * [ce_navigation] Content Navigation Module
+ * Copyright (C) 2010,2011 Tristan Lins
+ *
+ * Extension for:
  * Contao Open Source CMS
  * Copyright (C) 2005-2010 Leo Feyer
  *
@@ -21,15 +25,22 @@
  * Software Foundation website at <http://www.gnu.org/licenses/>.
  *
  * PHP version 5
- * @copyright  InfinitySoft 2010
+ * @copyright  InfinitySoft 2010,2011
  * @author     Tristan Lins <tristan.lins@infinitysoft.de>
  * @package    ContentNavigation
- * @license    http://opensource.org/licenses/lgpl-3.0.html
+ * @license    LGPL
+ * @filesource
  */
 
 
+/**
+ * Palettes
+ */
 $GLOBALS['TL_DCA']['tl_content']['palettes']['navigation'] = '{type_legend},type,headline,navigation_article,navigation_min_level,navigation_max_level;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 
+/**
+ * Fields
+ */
 $GLOBALS['TL_DCA']['tl_content']['fields']['navigation_article'] = array
 (
 	'label'                   => &$GLOBALS['TL_LANG']['tl_content']['navigation_article'],
@@ -61,8 +72,8 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['navigation_max_level'] = array
  * Class tl_content_navigation
  *
  * Provide miscellaneous methods that are used by the data configuration array.
- * @copyright  Tristan Lins 2010
- * @author     Tristan Lins <info@infinitysoft.de>
+ * @copyright  Tristan Lins 2010,2011
+ * @author     Tristan Lins <tristan.lins@infinitysoft.de>
  * @package    ContentNavigation
  */
 class tl_content_navigation extends Backend
