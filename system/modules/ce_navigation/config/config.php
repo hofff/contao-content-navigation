@@ -37,22 +37,3 @@
  * Content elements
  */
 $GLOBALS['TL_CTE']['links']['navigation'] = 'ContentNavigation';
-
-/**
- * runonce job
- */
-try {
-	$strExecutionLockFile = 'system/modules/ce_navigation/config/runonce-1.0.6_stable.lock';
-	if (!file_exists(TL_ROOT . '/' . $strExecutionLockFile))
-	{
-		# load the runonce class
-		require_once(TL_ROOT . '/system/modules/ce_navigation/ContentNavigationRunonceJob.php');
-		# execute the runonce update job
-		ContentNavigationRunonceJob::getInstance()->run("1.0.6 stable");
-		# lock the update
-		$objLock = new File($strExecutionLockFile);
-		$objLock->write('1');
-	}
-} catch(Exception $e) {}
-
-?>

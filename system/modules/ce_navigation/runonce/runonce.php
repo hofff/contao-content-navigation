@@ -32,60 +32,64 @@
  * @filesource
  */
 
+
 /**
- * Class ContentNavigationRunonceJob
+ * Class ContentNavigationRunonce
  * 
  * @copyright  InfinitySoft 2010,2011
  * @author     Tristan Lins <tristan.lins@infinitysoft.de>
  * @package    ContentNavigation
  */
-class ContentNavigationRunonceJob extends Backend
+class ContentNavigationRunonce extends Controller
 {
-	private static $instance = null;
-	
-	public static function getInstance()
-	{
-		if (self::$instance == null) {
-			self::$instance = new ContentNavigationRunonceJob();
-		}
-		return self::$instance;
-	}
-	
-	protected function __construct()
+	/**
+	 * @var Database
+	 */
+	protected $Database;
+
+	public function __construct()
 	{
 		$this->import('Database');
 	}
-	
-	public function run($strTargetVersion)
+
+	/**
+	 * Run runonce.
+	 * @return void
+	 */
+	public function run()
 	{
-		switch ($strTargetVersion)
+		$this->update_1_0_6();
+	}
+
+	/**
+	 * Update from version prior 1.0.6 stable
+	 * @return void
+	 */
+	protected function update_1_0_6()
+	{
+		/*
+		 * rename the database columns
+		 *   navigationArticle  -> navigation_article
+		 *   navigationMinLevel -> navigation_min_level
+		 *   navigationMaxLevel -> navigation_max_level
+		 */
+		if ($this->Database->tableExists('tl_content'))
 		{
-		// update from version prior 1.0.6 stable
-		case "1.0.6 stable":
-			/*
-			 * rename the database columns
-			 *   navigationArticle  -> navigation_article
-			 *   navigationMinLevel -> navigation_min_level
-			 *   navigationMaxLevel -> navigation_max_level
-			 */
-			if ($this->Database->tableExists('tl_content'))
+			if ($this->Database->fieldExists('navigationArticle', 'tl_content'))
 			{
-				if ($this->Database->fieldExists('navigationArticle', 'tl_content'))
-				{
-					$this->Database->execute("ALTER TABLE tl_content CHANGE navigationArticle navigation_article varchar(10) NOT NULL default ''");
-				}
-				if ($this->Database->fieldExists('navigationMinLevel', 'tl_content'))
-				{
-					$this->Database->execute("ALTER TABLE tl_content CHANGE navigationMinLevel navigation_min_level varchar(10) NOT NULL default '0'");
-				}
-				if ($this->Database->fieldExists('navigationMaxLevel', 'tl_content'))
-				{
-					$this->Database->execute("ALTER TABLE tl_content CHANGE navigationMaxLevel navigation_max_level varchar(10) NOT NULL default '0'");
-				}
+				$this->Database->execute("ALTER TABLE tl_content CHANGE navigationArticle navigation_article varchar(10) NOT NULL default ''");
 			}
-			break;
+			if ($this->Database->fieldExists('navigationMinLevel', 'tl_content'))
+			{
+				$this->Database->execute("ALTER TABLE tl_content CHANGE navigationMinLevel navigation_min_level varchar(10) NOT NULL default '0'");
+			}
+			if ($this->Database->fieldExists('navigationMaxLevel', 'tl_content'))
+			{
+				$this->Database->execute("ALTER TABLE tl_content CHANGE navigationMaxLevel navigation_max_level varchar(10) NOT NULL default '0'");
+			}
 		}
 	}
 }
 
-?>
+$objRunonce = new ContentNavigationRunonce();
+$objRunonce->run();
