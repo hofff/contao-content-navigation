@@ -37,5 +37,3 @@
  * Back end modules
  */
 $GLOBALS['TL_LANG']['MOD']['ce_navigation'] = 'Artikelnavigation';
-
-?>

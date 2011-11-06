@@ -264,4 +264,3 @@ class ArticleNavigation extends Frontend {
 	}
 	
 }
-?>

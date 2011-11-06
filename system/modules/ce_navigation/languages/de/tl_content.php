@@ -41,5 +41,3 @@ $GLOBALS['TL_LANG']['tl_content']['navigation_min_level']      = array('Start Le
 $GLOBALS['TL_LANG']['tl_content']['navigation_max_level']      = array('Stopp Level', 'Bei dieser Überschriftenebene aufhören (inklusive).');
 $GLOBALS['TL_LANG']['tl_content']['navigation_article_column'] = 'Artikel in Spalte';
 $GLOBALS['TL_LANG']['tl_content']['navigation_article_page']   = 'Artikel in Seite';
-
-?>

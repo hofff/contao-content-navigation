@@ -37,5 +37,3 @@
  * Miscellaneous
  */
 $GLOBALS['TL_LANG']['CTE']['navigation'] = array('Inhaltsnavigation', 'Erzeugt über alle Inhaltselementen mit Überschrift und CSS ID eine Navigation.');
-
-?>

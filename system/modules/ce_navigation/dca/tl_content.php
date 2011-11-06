@@ -127,4 +127,3 @@ class tl_content_navigation extends Backend
 	}
 	
 }
-?>
