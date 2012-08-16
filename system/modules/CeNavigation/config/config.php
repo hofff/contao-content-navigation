@@ -36,4 +36,4 @@
 /**
  * Content elements
  */
-$GLOBALS['TL_CTE']['links']['navigation'] = 'ContentNavigation';
+$GLOBALS['TL_CTE']['links']['navigation'] = 'CeNavigation\\ContentNavigation';

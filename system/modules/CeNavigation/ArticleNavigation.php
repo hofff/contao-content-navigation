@@ -1,4 +1,4 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
 
 /**
  * [ce_navigation] Content Navigation Module
@@ -32,6 +32,7 @@
  * @filesource
  */
 
+namespace InfinitySoft\CeNavigation;
 
 /**
  * Class ArticleNavigation
@@ -41,7 +42,7 @@
  * @author     Tristan Lins <tristan.lins@infinitysoft.de>
  * @package    ContentNavigation
  */
-class ArticleNavigation extends Frontend {
+class ArticleNavigation extends \Frontend {
 	
 	/**
 	 * Collect the headings from content elements.
@@ -53,7 +54,7 @@ class ArticleNavigation extends Frontend {
 	 * @return mixed
 	 * An structured array of the headings.
 	 */
-	protected function collect(Database_Result $objCte, $intMinLevel = 1, $intMaxLevel = 6, $intCurrentLevel = 1) {
+	protected function collect(\Database_Result $objCte, $intMinLevel = 1, $intMaxLevel = 6, $intCurrentLevel = 1) {
 		$arrItems = array();
 		$objPage = false;
 		$intArticleId = 0;

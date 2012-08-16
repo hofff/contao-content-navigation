@@ -1,4 +1,4 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
 
 /**
  * [ce_navigation] Content Navigation Module
@@ -32,6 +32,7 @@
  * @filesource
  */
 
+namespace InfinitySoft\CeNavigation;
 
 /**
  * Class ContentNavigation
@@ -41,7 +42,7 @@
  * @author     Tristan Lins <tristan.lins@infinitysoft.de>
  * @package    ContentNavigation
  */
-class ContentNavigation extends ContentElement
+class ContentNavigation extends \ContentElement
 {
 
 	/**
@@ -63,7 +64,7 @@ class ContentNavigation extends ContentElement
 		$arrItems[0]['class'] = 'first';
 		$arrItems[count($arrItems)-1]['class'] = 'last';
 	
-		$tpl = new FrontendTemplate('ce_navigation');
+		$tpl = new \FrontendTemplate('ce_navigation');
 		$tpl->items = $arrItems;
 		$tpl->level = $intLevel;
 		return $tpl->parse();
@@ -72,8 +73,9 @@ class ContentNavigation extends ContentElement
 	protected function compile()
 	{
 		global $objPage;
-		$this->import('ArticleNavigation');
-		
+		$this->import('CeNavigation\\ArticleNavigation', 'ArticleNavigation');
+		$this->ArticleNavigation = new \CeNavigation\ArticleNavigation();
+
 		if (is_numeric($this->navigation_article)) {
 			$arrItems = $this->ArticleNavigation->fromArticle($this->navigation_article, $this->navigation_min_level, $this->navigation_max_level);
 		} else {
