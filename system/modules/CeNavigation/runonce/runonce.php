@@ -42,11 +42,6 @@
  */
 class ContentNavigationRunonce extends Controller
 {
-	/**
-	 * @var Database
-	 */
-	protected $Database;
-
 	public function __construct()
 	{
 		$this->import('Database');
