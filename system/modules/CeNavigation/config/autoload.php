@@ -35,6 +35,6 @@ ClassLoader::addClasses(array
  */
 TemplateLoader::addFiles(array
 (
-	'ce_navigation'     => 'system/modules/ce_navigation/templates',
-	'mod_ce_navigation' => 'system/modules/ce_navigation/templates',
+	'ce_navigation'     => 'system/modules/CeNavigation/templates',
+	'mod_ce_navigation' => 'system/modules/CeNavigation/templates',
 ));
