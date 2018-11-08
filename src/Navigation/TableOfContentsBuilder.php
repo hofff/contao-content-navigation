@@ -67,8 +67,10 @@ final class TableOfContentsBuilder
         $items = [];
         $page  = null;
 
-        while ($item = next($result)) {
+        do {
+            $item = current($result);
             $page = $this->relatedPages->ofItem($item);
+
             if ($page === null) {
                 continue;
             }
@@ -90,7 +92,6 @@ final class TableOfContentsBuilder
 
                 // go down if the level should be collected
                 if ($level <= $maxLevel) {
-                    prev($result);
                     $subItems = $this->collect($result, $minLevel, $maxLevel, $currentLevel + 1);
 
                     if (count($items)) {
@@ -148,7 +149,7 @@ final class TableOfContentsBuilder
                 );
                 $items[] = $arrItem;
             }
-        }
+        } while (next($result));
 
         return $items;
     }
