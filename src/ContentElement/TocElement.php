@@ -15,6 +15,7 @@ use Contao\ContentElement;
 use Contao\ContentModel;
 use Contao\Environment;
 use Contao\FrontendTemplate;
+use Contao\StringUtil;
 use Hofff\Contao\TableOfContents\Navigation\TableOfContentsBuilder;
 use function count;
 
@@ -84,7 +85,7 @@ final class TocElement extends ContentElement
         $this->Template->items          = $this->parseItems($arrItems);
         $this->Template->request        = Environment::get('indexFreeRequest');
         $this->Template->skipId         = 'skipNavigation' . $this->id;
-        $this->Template->skipNavigation = specialchars($GLOBALS['TL_LANG']['MSC']['skipNavigation']);
+        $this->Template->skipNavigation = StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['skipNavigation']);
     }
 
 }

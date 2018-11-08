@@ -1,5 +1,9 @@
+# IDE
 .project
 .buildpath
 .settings
 .idea
-system/modules/CeNavigation/config/autoload.ini
+
+# Composer
+/vendor/
+composer.lock
