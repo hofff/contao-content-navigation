@@ -12,4 +12,4 @@ declare(strict_types=1);
 /**
  * Content elements
  */
-$GLOBALS['TL_CTE']['links']['hofff_toc'] = \Hofff\Contao\TableOfContens\ContentElement\TocElement::class;
+$GLOBALS['TL_CTE']['links']['hofff_toc'] = \Hofff\Contao\TableOfContents\ContentElement\TocElement::class;

@@ -9,11 +9,10 @@ declare(strict_types=1);
  * @copyright 2018 nickname . Büro für visuelle Kommunikation Nicky Hoff
  */
 
-namespace Hofff\Contao\TableOfContens\Navigation;
+namespace Hofff\Contao\TableOfContents\Navigation;
 
 use Contao\StringUtil;
 use Hofff\Contao\TableOfContents\Navigation\Query;
-use Hofff\Contao\TableOfContents\Navigation\RelatedPages;
 use function array_merge;
 use function count;
 use function next;
@@ -144,7 +143,7 @@ final class TableOfContentsBuilder
                     (array) $item,
                     [
                         'title' => $headline['value'],
-                        'href'  => $page->getFrontendUrl('#' . $cssId[0]),
+                        'href'  => $page->getFrontendUrl() . '#' . $cssId[0],
                     ]
                 );
                 $items[] = $arrItem;
