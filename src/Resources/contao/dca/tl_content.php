@@ -14,7 +14,7 @@ use Hofff\Contao\TableOfContents\EventListener\Dca\ContentDcaListener;
 /**
  * Palettes
  */
-$GLOBALS['TL_DCA']['tl_content']['palettes']['navigation'] = '{type_legend},type,headline'
+$GLOBALS['TL_DCA']['tl_content']['palettes']['hofff_toc'] = '{type_legend},type,headline'
     . ';{navigation_legend},navigation_article,navigation_min_level,navigation_max_level'
     . ';{template_legend:hide},customTpl'
     . ';{protected_legend:hide},protected'
@@ -27,8 +27,9 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['navigation_article'] = [
     'label'            => &$GLOBALS['TL_LANG']['tl_content']['navigation_article'],
     'default'          => 'main',
     'inputType'        => 'select',
-    'options_callback' => [ContentDcaListener::class, 'getArticles'],
-    'eval'             => ['mandatory' => true],
+    'options_callback' => [ContentDcaListener::class, 'articleOptions'],
+    'eval'             => ['mandatory' => false, 'includeBlankOption' => true],
+    'sql'              => 'varchar(32) NOT NULL default \'\'',
 ];
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['navigation_min_level'] = [
@@ -37,6 +38,7 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['navigation_min_level'] = [
     'inputType' => 'select',
     'options'   => ['1', '2', '3', '4', '5', '6'],
     'eval'      => ['tl_class' => 'w50'],
+    'sql'       => 'int(1) UNSIGNED NOT NULL default 1',
 ];
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['navigation_max_level'] = [
@@ -45,4 +47,5 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['navigation_max_level'] = [
     'inputType' => 'select',
     'options'   => ['1', '2', '3', '4', '5', '6'],
     'eval'      => ['tl_class' => 'w50'],
+    'sql'       => 'int(1) UNSIGNED NOT NULL default 2',
 ];
