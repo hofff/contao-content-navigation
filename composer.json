@@ -1,0 +1,50 @@
+{
+  "name": "hofff/contao-toc-element",
+  "description": "Provides a table of contents element based on one or more articles within the page",
+  "keywords": [
+    "contao",
+    "contents",
+    "nabigation",
+    "toc"
+  ],
+  "type": "contao-bundle",
+  "license": "LGPL-3.0-or-later",
+  "homepage": "https://www.hofff.com",
+  "authors": [
+    {
+      "name": "Nicky Hoff",
+      "homepage": "https://www.hofff.com",
+      "email": "nick@hofff.com",
+      "role": "Manager"
+    },
+    {
+      "name": "David Molineus",
+      "email": "david@hofff.com",
+      "homepage": "https://www.hofff.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^7.1",
+    "ext-pdo": "*",
+    "contao/core-bundle": "^4.4",
+    "symfony/http-kernel": "^3.3 || ^4.0",
+    "symfony/config": "^3.3 || ^4.0",
+    "symfony/dependency-injection": "^3.3 || ^4.0",
+    "doctrine/dbal": "^2.5"
+  },
+  "require-dev": {
+    "contao/manager-plugin": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Hofff\\Contao\\TableOfContents\\": "src/"
+    }
+  },
+  "extra": {
+    "contao-manager-plugin": "Hofff\\Contao\\TableOfContents\\ContaoManager\\Plugin",
+    "branch-alias": {
+      "dev-master": "1.0.x-dev"
+    }
+  }
+}

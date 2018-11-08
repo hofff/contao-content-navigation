@@ -7,20 +7,11 @@ declare(strict_types=1);
  *
  * @copyright 2010-2011 InfinitySoft
  * @copyright 2018 nickname . Büro für visuelle Kommunikation Nicky Hoff
- * Copyright (C) 2010,2011 Tristan Lins
  */
 
-namespace InfinitySoft\CeNavigation;
+namespace Hofff\Contao\TableOfContens\Navigation;
 
-/**
- * Class ArticleNavigation
- *
- * 
- * @copyright  Tristan Lins 2010,2011
- * @author     Tristan Lins <tristan.lins@infinitysoft.de>
- * @package    ContentNavigation
- */
-class ArticleNavigation extends \Frontend {
+final class ArticleNavigationBuilder extends \Frontend {
 	
 	/**
 	 * Collect the headings from content elements.
@@ -70,7 +61,7 @@ class ArticleNavigation extends \Frontend {
 			// only add if headline AND cssID is given
 			if (!empty($strHeadline['value']) && !empty($strCssId[0])) {
 				// the current heading level
-				$intLevel = intval(substr($strHeadline['unit'], 1));
+				$intLevel = (int) substr($strHeadline['unit'], 1);
 				
 				// go one level down, by calling the collect function
 				if ($intLevel > $intCurrentLevel)

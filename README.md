@@ -1,4 +1,8 @@
-# [ce_navigation] Content navigation for Contao
+# Contao Table of Contents Element
 
-ce_navigation is a content navigation for articles.
+This extension provides an table of contents content element which automatically creates a TOC navigation based on
+the 
 
+This extension was previously published as *ce_navigation* and maintained by Tristan Lins.
+
+## Requirements
