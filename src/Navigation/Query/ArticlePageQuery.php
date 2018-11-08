@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace Hofff\Contao\TableOfContents\Navigation\Query;
 
-use Contao\Model\Registry;
 use Contao\PageModel;
-use Doctrine\DBAL\Connection;
-use PDO;
 
-final class ArticlePageQuery
+final class ArticlePageQuery extends AbstractPageQuery
 {
     private const QUERY = <<<'SQL'
 SELECT
@@ -23,17 +20,6 @@ WHERE a.id = :articleId
 LIMIT 0,1
 SQL;
 
-    /**
-     * Database connection.
-     *
-     * @var Connection
-     */
-    private $connection;
-
-    public function __construct(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
 
     public function __invoke(int $articleId): ?PageModel
     {
@@ -44,20 +30,6 @@ SQL;
             return null;
         }
 
-        $row = $statement->fetch(PDO::FETCH_ASSOC);
-
-        $registry = Registry::getInstance();
-        $model    = $registry->fetch(PageModel::getTable(), $row['id']);
-
-        if ($model instanceof PageModel) {
-            return $model;
-        }
-
-        $model = new PageModel();
-        $model->setRow($row);
-
-        $registry->register($model);
-
-        return $model;
+        return $this->createPageModel($statement);
     }
 }

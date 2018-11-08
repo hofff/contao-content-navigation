@@ -4,6 +4,16 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
+    <parameters>
+        <parameter key="hoff_contao_toc.jump_to_relations" type="collection">
+            <parameter type="collection">
+                <parameter key="tl_news">tl_news_category</parameter>
+                <parameter key="tl_calendar_events">tl_calendar</parameter>
+                <parameter key="tl_faq">tl_faq_category</parameter>
+            </parameter>
+        </parameter>
+    </parameters>
+
     <services>
         <!-- Queries -->
         <service id="Hofff\Contao\TableOfContents\Navigation\Query\ItemsInColumnQuery">
@@ -20,8 +30,12 @@
             <argument type="service" id="database_connection" />
         </service>
 
+        <service id="Hofff\Contao\TableOfContents\Navigation\Query\JumpToPageQuery">
+            <argument type="service" id="database_connection" />
+        </service>
+
         <!-- Table of contents builder -->
-        <service id="Hofff\Contao\TableOfContens\Navigation\TableOfContentsBuilder" public="true">
+        <service id="Hofff\Contao\TableOfContents\Navigation\TableOfContentsBuilder" public="true">
             <argument type="service" id="Hofff\Contao\TableOfContents\Navigation\RelatedPages" />
             <argument type="service" id="Hofff\Contao\TableOfContents\Navigation\Query\ItemsInColumnQuery" />
             <argument type="service" id="Hofff\Contao\TableOfContents\Navigation\Query\ItemsInParentQuery" />
@@ -36,6 +50,8 @@
         <!-- Other services -->
         <service id="Hofff\Contao\TableOfContents\Navigation\RelatedPages">
             <argument type="service" id="Hofff\Contao\TableOfContents\Navigation\Query\ArticlePageQuery" />
+            <argument type="service" id="Hofff\Contao\TableOfContents\Navigation\Query\JumpToPageQuery" />
+            <argument>%hoff_contao_toc.jump_to_relations%</argument>
         </service>
 
         <service id="Hofff\Contao\TableOfContents\Request\PreviewModeDetector" />
