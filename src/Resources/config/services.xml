@@ -6,11 +6,9 @@
 
     <parameters>
         <parameter key="hoff_contao_toc.jump_to_relations" type="collection">
-            <parameter type="collection">
-                <parameter key="tl_news">tl_news_category</parameter>
-                <parameter key="tl_calendar_events">tl_calendar</parameter>
-                <parameter key="tl_faq">tl_faq_category</parameter>
-            </parameter>
+            <parameter key="tl_news">tl_news_archive</parameter>
+            <parameter key="tl_calendar_events">tl_calendar</parameter>
+            <parameter key="tl_faq">tl_faq_category</parameter>
         </parameter>
     </parameters>
 

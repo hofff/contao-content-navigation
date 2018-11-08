@@ -65,7 +65,7 @@ final class RelatedPages
                 return $this->getArticlePage($parentId);
         }
 
-        return $GLOBALS['objPage'];
+        return $GLOBALS['objPage'] ?? null;
     }
 
     /**
