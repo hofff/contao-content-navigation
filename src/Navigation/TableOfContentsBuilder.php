@@ -113,9 +113,9 @@ final class TableOfContentsBuilder
                 }
             } elseif ($level < $currentLevel) {
                 // this element is from an upper level
+                // just break and return to the upper level
 
                 prev($result);
-                // just break and return to the upper level
                 break;
             } elseif ($level < $minLevel) {
                 // skip all upper level elements and merge all lower levels into one array
@@ -126,12 +126,9 @@ final class TableOfContentsBuilder
                     $level    = (int) substr($headline['unit'], 1);
 
                     if ($level >= $minLevel) {
-                        prev($result);
-                        $subItems = $this->collect($item, $minLevel, $maxLevel, $currentLevel + 1);
+                        $subItems = $this->collect($result, $minLevel, $maxLevel, $currentLevel + 1);
 
                         if (count($subItems)) {
-                            prev($result);
-
                             $merge[] = $subItems;
                         }
                     }
