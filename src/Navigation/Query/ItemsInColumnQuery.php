@@ -12,15 +12,15 @@ final class ItemsInColumnQuery extends AbstractItemQuery
     {
         $builder = $this->connection->createQueryBuilder()
             ->select('c.*')
-            ->from('tl_content c')
+            ->from('tl_content', 'c')
             ->innerJoin('c', 'tl_article', 'a', 'a.id = c.pid')
             ->where('a.pid=:pageId')
             ->andWhere('a.inColumn=:column')
+            ->orderBy('a.sorting,c.sorting')
             ->setParameter('pageId', $pageId)
-            ->setParameter('column', $column)
-            ->orderBy('a.sorting,c.sorting');
+            ->setParameter('column', $column);
 
-        $this->addPublishedCondition($builder, 'a');
+        $this->addPublishedCondition($builder, 'a', 'published', false);
         $this->addPublishedCondition($builder, 'c');
 
         return $builder->execute()->fetchAll(PDO::FETCH_OBJ);

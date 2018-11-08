@@ -31,8 +31,12 @@ abstract class AbstractItemQuery
         $this->previewMode = $previewMode;
     }
 
-    protected function addPublishedCondition(QueryBuilder $builder, string $alias = 'c'): void
-    {
+    protected function addPublishedCondition(
+        QueryBuilder $builder,
+        string $alias = 'c',
+        string $column = 'invisible',
+        $inverted = true
+    ): void {
         if ($this->previewMode->isEnabled()) {
             return;
         }
@@ -41,8 +45,10 @@ abstract class AbstractItemQuery
 
         $builder->andWhere(sprintf('(%1$s.start=:empty OR %1$s.start<=:start)', $alias));
         $builder->andWhere(sprintf('(%1$s.stop=:empty OR %1$s.stop>:stop)', $alias));
-        $builder->andWhere(sprintf('%1$s.invisible=:empty', $alias));
+        $builder->andWhere(sprintf('%1$s.%2$s=:visible', $alias, $column));
         $builder->setParameter('start', $time);
         $builder->setParameter('stop', ($time + 60));
+        $builder->setParameter('empty', '');
+        $builder->setParameter('visible', $inverted ? '' : '1');
     }
 }

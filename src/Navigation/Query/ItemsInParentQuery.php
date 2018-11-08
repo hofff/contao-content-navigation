@@ -13,7 +13,7 @@ final class ItemsInParentQuery extends AbstractItemQuery
         $builder = $this->connection->createQueryBuilder()
             ->select('c.*')
             ->from('tl_content', 'c')
-            ->where('c.pid=?:pid')
+            ->where('c.pid=:pid')
             ->orderBy('c.sorting')
             ->setParameter('pid', $parentId)
             ->setParameter('empty', '');
