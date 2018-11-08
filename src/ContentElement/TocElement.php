@@ -9,21 +9,17 @@ declare(strict_types=1);
  * @copyright 2018 nickname . Büro für visuelle Kommunikation Nicky Hoff
  */
 
-namespace Hofff\Contao\TableOfContens\ContentElement;
+namespace Hofff\Contao\TableOfContents\ContentElement;
 
 use Contao\ContentElement;
 use Contao\ContentModel;
 use Contao\FrontendTemplate;
-use Hofff\Contao\TableOfContens\Navigation\TableOfContentsBuilder;
+use Hofff\Contao\TableOfContents\Navigation\TableOfContentsBuilder;
 use function count;
 
 final class TocElement extends ContentElement
 {
-    /**
-     * Template name.
-     *
-     * @var string
-     */
+    /** @var string */
     protected $strTemplate = 'ce_hofff_toc';
 
     /**
@@ -44,7 +40,7 @@ final class TocElement extends ContentElement
             return '';
         }
 
-        foreach ($items as $item) {
+        foreach ($items as &$item) {
             if (isset($item['subitems'])) {
                 $item['subitems'] = $this->parseItems($item['subitems'], $level + 1);
             }
@@ -62,7 +58,14 @@ final class TocElement extends ContentElement
 
     protected function compile(): void
     {
-        if (is_numeric($this->navigation_article)) {
+        if ($this->navigation_article === '') {
+            $arrItems = $this->tableOfContentsBuilder->fromParent(
+                (string) $this->ptable,
+                (int) $this->pid,
+                (int) $this->navigation_min_level,
+                (int) $this->navigation_max_level
+            );
+        } elseif (is_numeric($this->navigation_article)) {
             $arrItems = $this->tableOfContentsBuilder->fromArticle(
                 (int) $this->navigation_article,
                 (int) $this->navigation_min_level,
