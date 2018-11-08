@@ -6,17 +6,17 @@
 
     <services>
         <!-- Queries -->
-        <service id="Hofff\Contao\TableOfContents\Navigation\Query\ItemsInColumnQuery" lazy="true">
+        <service id="Hofff\Contao\TableOfContents\Navigation\Query\ItemsInColumnQuery">
             <argument type="service" id="database_connection" />
             <argument type="service" id="Hofff\Contao\TableOfContents\Request\PreviewModeDetector" />
         </service>
 
-        <service id="Hofff\Contao\TableOfContents\Navigation\Query\ItemsInParentQuery" lazy="true">
+        <service id="Hofff\Contao\TableOfContents\Navigation\Query\ItemsInParentQuery">
             <argument type="service" id="database_connection" />
             <argument type="service" id="Hofff\Contao\TableOfContents\Request\PreviewModeDetector" />
         </service>
 
-        <service id="Hofff\Contao\TableOfContents\Navigation\Query\ArticlePageQuery" lazy="true">
+        <service id="Hofff\Contao\TableOfContents\Navigation\Query\ArticlePageQuery">
             <argument type="service" id="database_connection" />
         </service>
 
