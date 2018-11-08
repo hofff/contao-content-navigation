@@ -5,13 +5,39 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="Hofff\Contao\TableOfContens\Navigation\ArticleNavigationBuilder" public="true">
+        <!-- Queries -->
+        <service id="Hofff\Contao\TableOfContents\Navigation\Query\ItemsInColumnQuery" lazy="true">
+            <argument type="service" id="database_connection" />
+            <argument type="service" id="Hofff\Contao\TableOfContents\Request\PreviewModeDetector" />
+        </service>
+
+        <service id="Hofff\Contao\TableOfContents\Navigation\Query\ItemsInParentQuery" lazy="true">
+            <argument type="service" id="database_connection" />
+            <argument type="service" id="Hofff\Contao\TableOfContents\Request\PreviewModeDetector" />
+        </service>
+
+        <service id="Hofff\Contao\TableOfContents\Navigation\Query\ArticlePageQuery" lazy="true">
             <argument type="service" id="database_connection" />
         </service>
 
+        <!-- Table of contents builder -->
+        <service id="Hofff\Contao\TableOfContens\Navigation\TableOfContentsBuilder" public="true">
+            <argument type="service" id="Hofff\Contao\TableOfContents\Navigation\RelatedPages" />
+            <argument type="service" id="Hofff\Contao\TableOfContents\Navigation\Query\ItemsInColumnQuery" />
+            <argument type="service" id="Hofff\Contao\TableOfContents\Navigation\Query\ItemsInParentQuery" />
+        </service>
+
+        <!-- Dca event listeners -->
         <service id="Hofff\Contao\TableOfContents\EventListener\Dca\ContentDcaListener" public="true">
             <argument type="service" id="database_connection" />
             <argument type="service" id="contao.framework" />
         </service>
+
+        <!-- Other services -->
+        <service id="Hofff\Contao\TableOfContents\Navigation\RelatedPages">
+            <argument type="service" id="Hofff\Contao\TableOfContents\Navigation\Query\ArticlePageQuery" />
+        </service>
+
+        <service id="Hofff\Contao\TableOfContents\Request\PreviewModeDetector" />
     </services>
 </container>

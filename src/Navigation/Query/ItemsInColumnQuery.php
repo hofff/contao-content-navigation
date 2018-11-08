@@ -1,0 +1,28 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Hofff\Contao\TableOfContents\Navigation\Query;
+
+use PDO;
+
+final class ItemsInColumnQuery extends AbstractItemQuery
+{
+    public function __invoke(int $pageId, string $column): array
+    {
+        $builder = $this->connection->createQueryBuilder()
+            ->select('c.*')
+            ->from('tl_content c')
+            ->innerJoin('c', 'tl_article', 'a', 'a.id = c.pid')
+            ->where('a.pid=:pageId')
+            ->andWhere('a.inColumn=:column')
+            ->setParameter('pageId', $pageId)
+            ->setParameter('column', $column)
+            ->orderBy('a.sorting,c.sorting');
+
+        $this->addPublishedCondition($builder, 'a');
+        $this->addPublishedCondition($builder, 'c');
+
+        return $builder->execute()->fetchAll(PDO::FETCH_OBJ);
+    }
+}
