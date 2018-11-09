@@ -5,7 +5,7 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="hoff_contao_toc.jump_to_relations" type="collection">
+        <parameter key="hoff_contao_content_navigation.jump_to_relations" type="collection">
             <parameter key="tl_news">tl_news_archive</parameter>
             <parameter key="tl_calendar_events">tl_calendar</parameter>
             <parameter key="tl_faq">tl_faq_category</parameter>
@@ -49,7 +49,7 @@
         <service id="Hofff\Contao\ContentNavigation\Navigation\RelatedPages">
             <argument type="service" id="Hofff\Contao\ContentNavigation\Navigation\Query\ArticlePageQuery" />
             <argument type="service" id="Hofff\Contao\ContentNavigation\Navigation\Query\JumpToPageQuery" />
-            <argument>%hoff_contao_toc.jump_to_relations%</argument>
+            <argument>%hoff_contao_content_navigation.jump_to_relations%</argument>
         </service>
 
         <service id="Hofff\Contao\ContentNavigation\Request\PreviewModeDetector" />

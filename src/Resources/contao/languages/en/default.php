@@ -12,4 +12,4 @@ declare(strict_types=1);
 /**
  * Miscellaneous
  */
-$GLOBALS['TL_LANG']['CTE']['navigation'] = array('Inhaltsnavigation', 'Erzeugt über alle Inhaltselementen mit Überschrift und CSS ID eine Navigation.');
+$GLOBALS['TL_LANG']['CTE']['navigation'] = array('Table of contents', 'Erzeugt über alle Inhaltselementen mit Überschrift und CSS ID eine Navigation.');
