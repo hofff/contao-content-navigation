@@ -1,5 +1,5 @@
 {
-  "name": "hofff/contao-toc-element",
+  "name": "hofff/contao-content-navigation",
   "description": "Provides a table of contents element based on one or more articles within the page",
   "keywords": [
     "contao",
@@ -39,11 +39,11 @@
   },
   "autoload": {
     "psr-4": {
-      "Hofff\\Contao\\TableOfContents\\": "src/"
+      "Hofff\\Contao\\ContentNavigation\\": "src/"
     }
   },
   "extra": {
-    "contao-manager-plugin": "Hofff\\Contao\\TableOfContents\\ContaoManager\\Plugin",
+    "contao-manager-plugin": "Hofff\\Contao\\ContentNavigation\\ContaoManager\\Plugin",
     "branch-alias": {
       "dev-master": "1.0.x-dev"
     }

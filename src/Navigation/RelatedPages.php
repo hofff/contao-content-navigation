@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Hofff\Contao\TableOfContents\Navigation;
+namespace Hofff\Contao\ContentNavigation\Navigation;
 
 use Contao\PageModel;
-use Hofff\Contao\TableOfContents\Navigation\Query\ArticlePageQuery;
-use Hofff\Contao\TableOfContents\Navigation\Query\JumpToPageQuery;
+use Hofff\Contao\ContentNavigation\Navigation\Query\ArticlePageQuery;
+use Hofff\Contao\ContentNavigation\Navigation\Query\JumpToPageQuery;
 use function array_key_exists;
 
 final class RelatedPages

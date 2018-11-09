@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hofff\Contao\TableOfContents\EventListener\Dca;
+namespace Hofff\Contao\ContentNavigation\EventListener\Dca;
 
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;

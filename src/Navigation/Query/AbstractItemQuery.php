@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Hofff\Contao\TableOfContents\Navigation\Query;
+namespace Hofff\Contao\ContentNavigation\Navigation\Query;
 
 use Contao\Date;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Hofff\Contao\TableOfContents\Request\PreviewModeDetector;
+use Hofff\Contao\ContentNavigation\Request\PreviewModeDetector;
 
 abstract class AbstractItemQuery
 {

@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Contao Table of Contents
+ * Contao Content Navigation
  *
  * @copyright 2010-2011 InfinitySoft
- * @copyright 2018 nickname . Büro für visuelle Kommunikation Nicky Hoff
+ * @copyright 2018 nickname. Büro für visuelle Kommunikation Nicky Hoff
  */
 
-use Hofff\Contao\TableOfContents\EventListener\Dca\ContentDcaListener;
+use Hofff\Contao\ContentNavigation\EventListener\Dca\ContentDcaListener;
 
 /*
  * Config
@@ -19,7 +19,7 @@ $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = [ContentDcaLis
 /*
  * Palettes
  */
-$GLOBALS['TL_DCA']['tl_content']['palettes']['hofff_toc'] = '{type_legend},type,headline'
+$GLOBALS['TL_DCA']['tl_content']['palettes']['hofff_content_navigation'] = '{type_legend},type,headline'
     . ';{toc_legend},hofff_toc_source,hofff_toc_min_level,hofff_toc_max_level'
     . ';{template_legend:hide},customTpl'
     . ';{protected_legend:hide},protected'

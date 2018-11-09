@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Hofff\Contao\TableOfContents\DependencyInjection;
+namespace Hofff\Contao\ContentNavigation\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
-final class HofffContaoTableOfContentsExtension extends Extension
+final class HofffContentNavigationExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hofff\Contao\TableOfContents\Request;
+namespace Hofff\Contao\ContentNavigation\Request;
 
 use function defined;
 

@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Contao Table of Contents
+ * Contao Content Navigation
  *
  * @copyright 2010-2011 InfinitySoft
- * @copyright 2018 nickname . Büro für visuelle Kommunikation Nicky Hoff
+ * @copyright 2018 nickname. Büro für visuelle Kommunikation Nicky Hoff
  */
 
-namespace Hofff\Contao\TableOfContents\ContentElement;
+namespace Hofff\Contao\ContentNavigation\ContentElement;
 
 use Contao\BackendTemplate;
 use Contao\ContentElement;
@@ -18,26 +18,24 @@ use Contao\Environment;
 use Contao\FrontendTemplate;
 use Contao\Input;
 use Contao\StringUtil;
-use Hofff\Contao\TableOfContents\Navigation\TableOfContentsBuilder;
+use Hofff\Contao\ContentNavigation\Navigation\ContentNavigationBuilder;
 use Patchwork\Utf8;
 use function count;
 use function sprintf;
 
-final class TocElement extends ContentElement
+final class ContentNavigationElement extends ContentElement
 {
     /** @var string */
-    protected $strTemplate = 'ce_hofff_toc';
+    protected $strTemplate = 'ce_hofff_content_navigation';
 
-    /**
-     * @var TableOfContentsBuilder
-     */
-    private $tableOfContentsBuilder;
+    /** @var ContentNavigationBuilder */
+    private $contentNavigationBuilder;
 
     public function __construct(ContentModel $objElement, string $strColumn = 'main')
     {
         parent::__construct($objElement, $strColumn);
 
-        $this->tableOfContentsBuilder = self::getContainer()->get(TableOfContentsBuilder::class);
+        $this->contentNavigationBuilder = self::getContainer()->get(ContentNavigationBuilder::class);
     }
 
     public function generate(): string
@@ -76,7 +74,7 @@ final class TocElement extends ContentElement
         $items[0]['class']                 = 'first';
         $items[count($items) - 1]['class'] = 'last';
 
-        $tpl = new FrontendTemplate('toc_default');
+        $tpl = new FrontendTemplate('hofff_content_nav_default');
         $tpl->setData(['items' => $items, 'level' => $level]);
 
         return $tpl->parse();
@@ -85,20 +83,20 @@ final class TocElement extends ContentElement
     protected function compile(): void
     {
         if ($this->hofff_toc_source === '') {
-            $arrItems = $this->tableOfContentsBuilder->fromParent(
+            $arrItems = $this->contentNavigationBuilder->fromParent(
                 (string) $this->ptable,
                 (int) $this->pid,
                 (int) $this->hofff_toc_min_level,
                 (int) $this->hofff_toc_max_level
             );
         } elseif (is_numeric($this->hofff_toc_source)) {
-            $arrItems = $this->tableOfContentsBuilder->fromArticle(
+            $arrItems = $this->contentNavigationBuilder->fromArticle(
                 (int) $this->hofff_toc_source,
                 (int) $this->hofff_toc_min_level,
                 (int) $this->hofff_toc_max_level
             );
         } else {
-            $arrItems = $this->tableOfContentsBuilder->fromColumn(
+            $arrItems = $this->contentNavigationBuilder->fromColumn(
                 (int) $GLOBALS['objPage']->id,
                 $this->hofff_toc_source,
                 (int) $this->hofff_toc_min_level,
@@ -111,5 +109,4 @@ final class TocElement extends ContentElement
         $this->Template->skipId         = 'skipNavigation' . $this->id;
         $this->Template->skipNavigation = StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['skipNavigation']);
     }
-
 }

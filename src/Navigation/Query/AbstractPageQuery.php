@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hofff\Contao\TableOfContents\Navigation\Query;
+namespace Hofff\Contao\ContentNavigation\Navigation\Query;
 
 use Contao\PageModel;
 use Contao\Model\Registry;

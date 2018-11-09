@@ -3,22 +3,22 @@
 declare(strict_types=1);
 
 /**
- * Contao Table of Contents
+ * Contao Content Navigation
  *
  * @copyright 2010-2011 InfinitySoft
- * @copyright 2018 nickname . Büro für visuelle Kommunikation Nicky Hoff
+ * @copyright 2018 nickname. Büro für visuelle Kommunikation Nicky Hoff
  */
 
-namespace Hofff\Contao\TableOfContents\Navigation;
+namespace Hofff\Contao\ContentNavigation\Navigation;
 
 use Contao\StringUtil;
-use Hofff\Contao\TableOfContents\Navigation\Query;
+use Hofff\Contao\ContentNavigation\Navigation\Query;
 use function array_merge;
 use function count;
 use function next;
 use function prev;
 
-final class TableOfContentsBuilder
+final class ContentNavigationBuilder
 {
     /**
      * @var RelatedPages
