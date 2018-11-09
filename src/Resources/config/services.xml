@@ -42,7 +42,7 @@
         <!-- Dca event listeners -->
         <service id="Hofff\Contao\ContentNavigation\EventListener\Dca\ContentDcaListener" public="true">
             <argument type="service" id="database_connection" />
-            <argument type="service" id="contao.framework" />
+            <argument type="service" id="Hofff\Contao\ContentNavigation\Navigation\Query\ArticlePageQuery" />
         </service>
 
         <!-- Other services -->
