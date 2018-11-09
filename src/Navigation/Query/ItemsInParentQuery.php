@@ -14,11 +14,11 @@ final class ItemsInParentQuery extends AbstractItemQuery
             ->select('c.*')
             ->from('tl_content', 'c')
             ->where('c.pid=:pid')
-            ->andWhere('c.hofff_toc_exclude=:exclude')
+            ->andWhere('c.hofff_toc_include=:include')
             ->orderBy('c.sorting')
             ->setParameter('pid', $parentId)
             ->setParameter('empty', '')
-            ->setParameter('exclude', '');
+            ->setParameter('include', '1');
 
         if ($parentTable === 'tl_article' || $parentTable === '') {
             $builder->andWhere('(c.ptable=:empty OR c.ptable=:ptable)');

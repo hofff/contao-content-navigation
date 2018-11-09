@@ -62,9 +62,14 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_max_level'] = [
     'sql'       => 'int(1) UNSIGNED NOT NULL default 2',
 ];
 
-$GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_exclude'] = [
-    'label'     => &$GLOBALS['TL_LANG']['tl_content']['hofff_toc_exclude'],
+$GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_include'] = [
+    'label'     => &$GLOBALS['TL_LANG']['tl_content']['hofff_toc_include'],
     'inputType' => 'checkbox',
     'eval'      => ['tl_class' => 'clr w50'],
     'sql'       => 'char(1) NOT NULL default \'\'',
+];
+
+$GLOBALS['TL_DCA']['tl_content']['fields']['cssID']['save_callback'][] = [
+    ContentDcaListener::class,
+    'generateCssId'
 ];

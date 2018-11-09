@@ -7,9 +7,10 @@ namespace Hofff\Contao\ContentNavigation\EventListener\Dca;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\DataContainer;
-use Contao\System;
+use Contao\StringUtil;
 use Doctrine\DBAL\Connection;
 use function is_array;
+use Patchwork\Utf8;
 use PDO;
 
 final class ContentDcaListener
@@ -49,7 +50,7 @@ final class ContentDcaListener
         }
 
         $manipulator = PaletteManipulator::create()
-            ->addField('hofff_toc_exclude', 'expert_legend', PaletteManipulator::POSITION_APPEND);
+            ->addField('hofff_toc_include', 'cssID', PaletteManipulator::POSITION_BEFORE);
 
         foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $name => $config) {
             if (is_array($config)) {
@@ -117,5 +118,39 @@ final class ContentDcaListener
             $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_column'] => $columns,
             $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_page']   => $articles,
         ];
+    }
+
+    public function generateCssId($value, $dataContainer): array
+    {
+        $value = StringUtil::deserialize($value, true);
+
+        if (!$dataContainer
+            || !$dataContainer->activeRecord
+            || !$dataContainer->activeRecord->hofff_toc_include
+            || $value[0]
+        ) {
+            return $value;
+        }
+
+        $headline = StringUtil::deserialize($dataContainer->activeRecord->headline, true);
+        if (!$headline['value']) {
+            return $value;
+        }
+
+        $search  = ['/[^0-9A-z \.\&\/_-]+/u', '/[ \.\&\/-]+/'];
+        $replace = ['', '-'];
+
+        $cssId = $headline['value'];
+        $cssId = html_entity_decode($cssId, ENT_QUOTES, $GLOBALS['TL_CONFIG']['characterSet']);
+        $cssId = StringUtil::stripInsertTags($cssId);
+        $cssId = preg_replace($search, $replace, $cssId);
+
+        if (is_numeric($cssId[0])) {
+            $cssId = 'id-' . $cssId;
+        }
+
+        $value[0] = Utf8::strtolower(trim($cssId, '-'));
+
+        return $value;
     }
 }
