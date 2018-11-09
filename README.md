@@ -30,7 +30,7 @@ You can define the source for the table of content structure depending where the
 
 If your 3rd party module also works like the news or events module (category defining a `jumpTo` page and an entry 
 holding content elements), you can enable support for your own module by adding it to the 
-`hoff_contao_content_navigation.jump_to_relations` parameter.
+`hofff_contao_content_navigation.jump_to_relations` parameter.
 
 ## Known limitations
 
