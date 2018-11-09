@@ -15,7 +15,7 @@ FROM
     tl_page p
 INNER JOIN
     tl_article a
-    ON a.pid = p.id
+    ON p.id = a.pid
 WHERE a.id = :articleId
 LIMIT 0,1
 SQL;

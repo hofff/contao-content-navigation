@@ -61,7 +61,7 @@ final class RelatedPages
 
         switch ($item->ptable) {
             case '':
-            case 'ptable':
+            case 'tl_article':
                 return $this->getArticlePage($parentId);
         }
 
