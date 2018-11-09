@@ -43,12 +43,12 @@ abstract class AbstractItemQuery
 
         $time = Date::floorToMinute();
 
-        $builder->andWhere(sprintf('(%1$s.start=:empty OR %1$s.start<=:start)', $alias));
-        $builder->andWhere(sprintf('(%1$s.stop=:empty OR %1$s.stop>:stop)', $alias));
-        $builder->andWhere(sprintf('%1$s.%2$s=:visible', $alias, $column));
-        $builder->setParameter('start', $time);
-        $builder->setParameter('stop', ($time + 60));
-        $builder->setParameter('empty', '');
-        $builder->setParameter('visible', $inverted ? '' : '1');
+        $builder->andWhere(sprintf('(%1$s.start=:%1$s_empty OR %1$s.start<=:%1$s_start)', $alias));
+        $builder->andWhere(sprintf('(%1$s.stop=:%1$s_empty OR %1$s.stop>:%1$s_stop)', $alias));
+        $builder->andWhere(sprintf('%1$s.%2$s=:%1$s_visible', $alias, $column));
+        $builder->setParameter($alias . '_start', $time);
+        $builder->setParameter($alias . '_stop', ($time + 60));
+        $builder->setParameter($alias . '_empty', '');
+        $builder->setParameter($alias . '_visible', $inverted ? '' : '1');
     }
 }
