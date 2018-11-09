@@ -11,7 +11,12 @@ declare(strict_types=1);
 
 use Hofff\Contao\TableOfContents\EventListener\Dca\ContentDcaListener;
 
-/**
+/*
+ * Config
+ */
+$GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = [ContentDcaListener::class, 'adjustPalettes'];
+
+/*
  * Palettes
  */
 $GLOBALS['TL_DCA']['tl_content']['palettes']['hofff_toc'] = '{type_legend},type,headline'
@@ -20,7 +25,7 @@ $GLOBALS['TL_DCA']['tl_content']['palettes']['hofff_toc'] = '{type_legend},type,
     . ';{protected_legend:hide},protected'
     . ';{expert_legend:hide},guests,cssID,space';
 
-/**
+/*
  * Fields
  */
 $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_source'] = [
@@ -39,8 +44,9 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_source'] = [
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_min_level'] = [
     'label'     => &$GLOBALS['TL_LANG']['tl_content']['hofff_toc_min_level'],
-    'default'   => '1',
     'inputType' => 'select',
+    'default'   => '1',
+    'exclude'   => true,
     'options'   => ['1', '2', '3', '4', '5', '6'],
     'eval'      => ['tl_class' => 'w50'],
     'sql'       => 'int(1) UNSIGNED NOT NULL default 1',
@@ -48,9 +54,17 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_min_level'] = [
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_max_level'] = [
     'label'     => &$GLOBALS['TL_LANG']['tl_content']['hofff_toc_max_level'],
-    'default'   => '6',
     'inputType' => 'select',
+    'default'   => '6',
+    'exclude'   => true,
     'options'   => ['1', '2', '3', '4', '5', '6'],
     'eval'      => ['tl_class' => 'w50'],
     'sql'       => 'int(1) UNSIGNED NOT NULL default 2',
+];
+
+$GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_exclude'] = [
+    'label'     => &$GLOBALS['TL_LANG']['tl_content']['hofff_toc_exclude'],
+    'inputType' => 'checkbox',
+    'eval'      => ['tl_class' => 'clr w50'],
+    'sql'       => 'char(1) NOT NULL default \'\'',
 ];

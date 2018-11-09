@@ -15,10 +15,12 @@ final class ItemsInColumnQuery extends AbstractItemQuery
             ->from('tl_content', 'c')
             ->innerJoin('c', 'tl_article', 'a', 'a.id = c.pid')
             ->where('a.pid=:pageId')
+            ->andWhere('c.hofff_toc_exclude=:exclude')
             ->andWhere('a.inColumn=:column')
             ->orderBy('a.sorting,c.sorting')
             ->setParameter('pageId', $pageId)
-            ->setParameter('column', $column);
+            ->setParameter('column', $column)
+            ->setParameter('exclude', '');
 
         $this->addPublishedCondition($builder, 'a', 'published', false);
         $this->addPublishedCondition($builder, 'c');

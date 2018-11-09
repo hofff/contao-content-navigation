@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Hofff\Contao\TableOfContents\EventListener\Dca;
 
+use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\DataContainer;
 use Contao\System;
 use Doctrine\DBAL\Connection;
+use function is_array;
 use PDO;
 
 final class ContentDcaListener
@@ -36,6 +38,26 @@ final class ContentDcaListener
     {
         $this->connection = $connection;
         $this->framework  = $framework;
+    }
+
+    public function adjustPalettes(): void
+    {
+        if (!isset($GLOBALS['TL_DCA']['tl_content']['palettes'])
+            || !is_array($GLOBALS['TL_DCA']['tl_content']['palettes'])
+        ) {
+            return;
+        }
+
+        $manipulator = PaletteManipulator::create()
+            ->addField('hofff_toc_exclude', 'expert_legend', PaletteManipulator::POSITION_APPEND);
+
+        foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $name => $config) {
+            if (is_array($config)) {
+                continue;
+            }
+
+            $manipulator->applyToPalette($name, 'tl_content');
+        }
     }
 
     /**
@@ -96,5 +118,4 @@ final class ContentDcaListener
             $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_page']   => $articles,
         ];
     }
-
 }
