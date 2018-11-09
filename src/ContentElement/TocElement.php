@@ -11,12 +11,14 @@ declare(strict_types=1);
 
 namespace Hofff\Contao\TableOfContents\ContentElement;
 
+use Contao\BackendTemplate;
 use Contao\ContentElement;
 use Contao\ContentModel;
 use Contao\Environment;
 use Contao\FrontendTemplate;
 use Contao\StringUtil;
 use Hofff\Contao\TableOfContents\Navigation\TableOfContentsBuilder;
+use Patchwork\Utf8;
 use function count;
 
 final class TocElement extends ContentElement
@@ -34,6 +36,22 @@ final class TocElement extends ContentElement
         parent::__construct($objElement, $strColumn);
 
         $this->tableOfContentsBuilder = self::getContainer()->get(TableOfContentsBuilder::class);
+    }
+
+    public function generate(): string
+    {
+        if (TL_MODE === 'BE') {
+            $template           = new BackendTemplate('be_wildcard');
+            $template->wildcard = '### ' . Utf8::strtoupper($GLOBALS['TL_LANG']['CTE'][$this->type][0]) . ' ###';
+            $template->title    = $this->headline;
+            $template->id       = $this->id;
+            $template->link     = $this->name;
+            $template->href     = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $this->id;
+
+            return $template->parse();
+        }
+
+        return parent::generate();
     }
 
     private function parseItems(array $items, int $level = 1): string
