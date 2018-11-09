@@ -16,10 +16,12 @@ use Contao\ContentElement;
 use Contao\ContentModel;
 use Contao\Environment;
 use Contao\FrontendTemplate;
+use Contao\Input;
 use Contao\StringUtil;
 use Hofff\Contao\TableOfContents\Navigation\TableOfContentsBuilder;
 use Patchwork\Utf8;
 use function count;
+use function sprintf;
 
 final class TocElement extends ContentElement
 {
@@ -45,8 +47,12 @@ final class TocElement extends ContentElement
             $template->wildcard = '### ' . Utf8::strtoupper($GLOBALS['TL_LANG']['CTE'][$this->type][0]) . ' ###';
             $template->title    = $this->headline;
             $template->id       = $this->id;
-            $template->link     = $this->name;
-            $template->href     = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $this->id;
+            $template->link     = $GLOBALS['TL_LANG']['CTE'][$this->type][0];
+            $template->href     = sprintf(
+                Environment::get('indexFreeRequest') . 'contao?do=%s&amp;table=tl_content&amp;act=edit&amp;id=%s',
+                Input::get('do'),
+                $this->id
+            );
 
             return $template->parse();
         }
