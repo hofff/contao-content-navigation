@@ -39,7 +39,7 @@ final class ContentDcaListener
     }
 
     /**
-     * Return all content elements as array
+     * Return all content elements as array.
      *
      * @param DataContainer $dataContainer
      *
@@ -47,13 +47,15 @@ final class ContentDcaListener
      *
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function articleOptions(DataContainer $dataContainer): array
+    public function sourceOptions(DataContainer $dataContainer): array
     {
-        $this->framework->getAdapter(System::class)->__call('loadLanguageFile', ['tl_article']);
+        if ($GLOBALS['TL_DCA']['tl_content']['config']['ptable'] !== 'tl_article') {
+            return [];
+        }
 
         $columns = [];
         foreach (['header', 'left', 'main', 'right', 'footer'] as $column) {
-            $columns[$column] = $GLOBALS['TL_LANG']['tl_article'][$column];
+            $columns[$column] = $GLOBALS['TL_LANG']['COLS'][$column] ?? $column;
         }
 
         $articles  = [];
@@ -83,15 +85,15 @@ final class ContentDcaListener
 
         while ($row = $statement->fetch(PDO::FETCH_OBJ)) {
             $articles[$row->id] = sprintf(
-                '%s (%s)',
+                '%s [%s]',
                 $row->title,
-                $GLOBALS['TL_LANG']['tl_article'][$row->inColumn] ?? $row->inColumn
+                $GLOBALS['TL_LANG']['COLS'][$row->inColumn] ?? $row->inColumn
             );
         }
 
         return [
-            $GLOBALS['TL_LANG']['tl_content']['navigation_article_column'] => $columns,
-            $GLOBALS['TL_LANG']['tl_content']['navigation_article_page']   => $articles,
+            $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_column'] => $columns,
+            $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_page']   => $articles,
         ];
     }
 

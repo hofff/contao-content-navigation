@@ -60,25 +60,25 @@ final class TocElement extends ContentElement
 
     protected function compile(): void
     {
-        if ($this->navigation_article === '') {
+        if ($this->hofff_toc_source === '') {
             $arrItems = $this->tableOfContentsBuilder->fromParent(
                 (string) $this->ptable,
                 (int) $this->pid,
-                (int) $this->navigation_min_level,
-                (int) $this->navigation_max_level
+                (int) $this->hofff_toc_min_level,
+                (int) $this->hofff_toc_max_level
             );
-        } elseif (is_numeric($this->navigation_article)) {
+        } elseif (is_numeric($this->hofff_toc_source)) {
             $arrItems = $this->tableOfContentsBuilder->fromArticle(
-                (int) $this->navigation_article,
-                (int) $this->navigation_min_level,
-                (int) $this->navigation_max_level
+                (int) $this->hofff_toc_source,
+                (int) $this->hofff_toc_min_level,
+                (int) $this->hofff_toc_max_level
             );
         } else {
             $arrItems = $this->tableOfContentsBuilder->fromColumn(
                 (int) $GLOBALS['objPage']->id,
-                $this->navigation_article,
-                (int) $this->navigation_min_level,
-                (int) $this->navigation_max_level
+                $this->hofff_toc_source,
+                (int) $this->hofff_toc_min_level,
+                (int) $this->hofff_toc_max_level
             );
         }
 
