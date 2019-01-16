@@ -10,6 +10,10 @@
             <parameter key="tl_calendar_events">tl_calendar</parameter>
             <parameter key="tl_faq">tl_faq_category</parameter>
         </parameter>
+
+        <parameter key="hofff.contao.content_navigation.css_id_generator.options" type="collection">
+            <parameter key="locale">de</parameter>
+        </parameter>
     </parameters>
 
     <services>
@@ -43,6 +47,7 @@
         <service id="Hofff\Contao\ContentNavigation\EventListener\Dca\ContentDcaListener" public="true">
             <argument type="service" id="database_connection" />
             <argument type="service" id="Hofff\Contao\ContentNavigation\Navigation\Query\ArticlePageQuery" />
+            <argument type="service" id="hofff.contao.content_navigation.css_id_generator" />
         </service>
 
         <!-- Other services -->
@@ -50,6 +55,11 @@
             <argument type="service" id="Hofff\Contao\ContentNavigation\Navigation\Query\ArticlePageQuery" />
             <argument type="service" id="Hofff\Contao\ContentNavigation\Navigation\Query\JumpToPageQuery" />
             <argument>%hofff_contao_content_navigation.jump_to_relations%</argument>
+        </service>
+
+        <!-- CSS ID Generator -->
+        <service id="hofff.contao.content_navigation.css_id_generator" class="Ausi\SlugGenerator\SlugGenerator">
+            <argument>%hofff.contao.content_navigation.css_id_generator.options%</argument>
         </service>
 
         <service id="Hofff\Contao\ContentNavigation\Request\PreviewModeDetector" />

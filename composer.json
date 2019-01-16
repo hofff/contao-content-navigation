@@ -32,7 +32,8 @@
     "symfony/http-kernel": "^3.3 || ^4.0",
     "symfony/config": "^3.3 || ^4.0",
     "symfony/dependency-injection": "^3.3 || ^4.0",
-    "doctrine/dbal": "^2.5"
+    "doctrine/dbal": "^2.5",
+    "ausi/slug-generator": "^1.1"
   },
   "require-dev": {
     "contao/manager-plugin": "^2.0"

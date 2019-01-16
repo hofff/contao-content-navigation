@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Hofff\Contao\ContentNavigation\EventListener\Dca;
 
+use Ausi\SlugGenerator\SlugGenerator;
 use Contao\Backend;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\DataContainer;
@@ -30,15 +31,25 @@ final class ContentDcaListener
     private $articlePageQuery;
 
     /**
+     * @var SlugGenerator
+     */
+    private $cssIdGenerator;
+
+    /**
      * ContentDcaListener constructor.
      *
      * @param Connection       $connection
      * @param ArticlePageQuery $articlePageQuery
+     * @param SlugGenerator    $cssIdGenerator
      */
-    public function __construct(Connection $connection, ArticlePageQuery $articlePageQuery)
-    {
+    public function __construct(
+        Connection $connection,
+        ArticlePageQuery $articlePageQuery,
+        SlugGenerator $cssIdGenerator
+    ) {
         $this->connection       = $connection;
         $this->articlePageQuery = $articlePageQuery;
+        $this->cssIdGenerator   = $cssIdGenerator;
     }
 
     public function adjustPalettes(): void
@@ -103,13 +114,10 @@ final class ContentDcaListener
             return $value;
         }
 
-        $search  = ['/[^0-9A-z \.\&\/_-]+/u', '/[ \.\&\/-]+/'];
-        $replace = ['', '-'];
-
         $cssId = $headline['value'];
         $cssId = html_entity_decode($cssId, ENT_QUOTES, $GLOBALS['TL_CONFIG']['characterSet']);
         $cssId = StringUtil::stripInsertTags($cssId);
-        $cssId = preg_replace($search, $replace, $cssId);
+        $cssId = $this->cssIdGenerator->generate($cssId);
 
         if (is_numeric($cssId[0])) {
             $cssId = 'id-' . $cssId;
