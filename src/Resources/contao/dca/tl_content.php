@@ -31,6 +31,7 @@ $GLOBALS['TL_DCA']['tl_content']['palettes']['hofff_content_navigation'] = '{typ
 $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_source'] = [
     'label'            => &$GLOBALS['TL_LANG']['tl_content']['hofff_toc_source'],
     'default'          => 'main',
+    'exclude'          => true,
     'inputType'        => 'select',
     'options_callback' => [ContentDcaListener::class, 'sourceOptions'],
     'eval'             => [
@@ -65,6 +66,8 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_max_level'] = [
 $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_include'] = [
     'label'     => &$GLOBALS['TL_LANG']['tl_content']['hofff_toc_include'],
     'inputType' => 'checkbox',
+    'exclude'   => true,
+    'filter'    => true, 
     'eval'      => ['tl_class' => 'clr w50'],
     'sql'       => 'char(1) NOT NULL default \'\'',
 ];
