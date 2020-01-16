@@ -1,6 +1,6 @@
 {
   "name": "hofff/contao-content-navigation",
-  "description": "Provides a table of contents element based on one or more articles within the page",
+  "description": "Provides a table of contents for elements based on one or more articles within the page.",
   "keywords": [
     "contao",
     "contents",

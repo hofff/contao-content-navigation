@@ -17,7 +17,7 @@ $GLOBALS['TL_LANG']['tl_content']['toc_legend'] = 'Inhaltsverzeichnis';
 $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source']        = array('Bereich', 'Bereich auswählen, für den die Inhaltsnavigation erstellt werden soll.');
 $GLOBALS['TL_LANG']['tl_content']['hofff_toc_min_level']     = array('Start Level', 'Bei dieser Überschriftenebene anfangen (inklusive).');
 $GLOBALS['TL_LANG']['tl_content']['hofff_toc_max_level']     = array('Stopp Level', 'Bei dieser Überschriftenebene aufhören (inklusive).');
-$GLOBALS['TL_LANG']['tl_content']['hofff_toc_include']       = array('Im Inhaltsnavigation aufnehmen', 'Element wird in der Inhaltsnavigation aufgenommen, soweit eine Überschrift erstellt wurde. Falls nicht vorhanden, wird eine CSS-ID generiert.');
+$GLOBALS['TL_LANG']['tl_content']['hofff_toc_include']       = array('In Inhaltsnavigation aufnehmen', 'Element wird in der Inhaltsnavigation aufgenommen, soweit eine Überschrift definiert ist. Falls keine CSS-ID vorhanden ist, wird diese automatisch generiert.');
 $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_column'] = 'Artikel in Spalte';
 $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_page']   = 'Artikel in Seite';
 
