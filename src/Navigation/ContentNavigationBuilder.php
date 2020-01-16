@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Hofff\Contao\ContentNavigation\Navigation;
 
+use Contao\Environment;
 use Contao\StringUtil;
 use Hofff\Contao\ContentNavigation\Navigation\Query;
 use function array_merge;
@@ -137,11 +138,15 @@ final class ContentNavigationBuilder
                 $items = array_merge(...$merge);
             } else {
                 // add a new item of the same level
+                $pageUrl = $page->id === $GLOBALS['objPage']->id
+                    ? Environment::get('indexFreeRequest')
+                    : $page->getFrontendUrl();
+
                 $arrItem = array_merge(
                     (array) $item,
                     [
                         'title' => $headline['value'],
-                        'href'  => $page->getFrontendUrl() . '#' . $cssId[0],
+                        'href'  => $pageUrl . '#' . $cssId[0],
                     ]
                 );
                 $items[] = $arrItem;
