@@ -56,15 +56,21 @@ final class ContentNavigationBuilder
     /**
      * Collect the headings from content elements and return an structured array of headings.
      *
-     * @param array|object[] $result       $result The database result of content elements.
-     * @param int            $minLevel     Min navigation level.
-     * @param int            $maxLevel     Max navigation level.
-     * @param integer        $currentLevel The current heading level.
+     * @param array|object[] $result          $result The database result of content elements.
+     * @param int            $minLevel        Min navigation level.
+     * @param int            $maxLevel        Max navigation level.
+     * @param integer        $currentLevel    The current heading level.
+     * @param bool           $forceRequestUri Force the current request URI instead of connected page.
      *
      * @return array
      */
-    private function collect(array &$result, int $minLevel = 1, int $maxLevel = 6, int $currentLevel = 1): array
-    {
+    private function collect(
+        array &$result,
+        int $minLevel = 1,
+        int $maxLevel = 6,
+        int $currentLevel = 1,
+        bool $forceRequestUri = false
+    ): array {
         $items = [];
         $page  = null;
 
@@ -93,7 +99,7 @@ final class ContentNavigationBuilder
 
                 // go down if the level should be collected
                 if ($level <= $maxLevel) {
-                    $subItems = $this->collect($result, $minLevel, $maxLevel, $currentLevel + 1);
+                    $subItems = $this->collect($result, $minLevel, $maxLevel, $currentLevel + 1, $forceRequestUri);
 
                     if (count($items)) {
                         $items[count($items) - 1]['subitems'] = $subItems;
@@ -127,7 +133,7 @@ final class ContentNavigationBuilder
                     $level    = (int) substr($headline['unit'], 1);
 
                     if ($level >= $minLevel) {
-                        $subItems = $this->collect($result, $minLevel, $maxLevel, $currentLevel + 1);
+                        $subItems = $this->collect($result, $minLevel, $maxLevel, $currentLevel + 1, $forceRequestUri);
 
                         if (count($subItems)) {
                             $merge[] = $subItems;
@@ -138,7 +144,7 @@ final class ContentNavigationBuilder
                 $items = array_merge(...$merge);
             } else {
                 // add a new item of the same level
-                $pageUrl = $page->id === $GLOBALS['objPage']->id
+                $pageUrl = ($forceRequestUri || $page->id === $GLOBALS['objPage']->id)
                     ? Environment::get('indexFreeRequest')
                     : $page->getFrontendUrl();
 
@@ -159,52 +165,73 @@ final class ContentNavigationBuilder
     /**
      * Collect the headings from the parent and return a structured array of the headings.
      *
-     * @param string $parentTable The parent table.
-     * @param int    $parentId    The parent name.
-     * @param int    $minLevel    Min navigation level.
-     * @param int    $maxLevel    Max navigation level.
+     * @param string $parentTable     The parent table.
+     * @param int    $parentId        The parent name.
+     * @param int    $minLevel        Min navigation level.
+     * @param int    $maxLevel        Max navigation level.
+     * @param bool   $forceRequestUri Force the current request URI instead of connected page.
      *
      * @return array
      */
-    public function fromParent(string $parentTable, int $parentId, int $minLevel = 1, int $maxLevel = 6): array
-    {
+    public function fromParent(
+        string $parentTable,
+        int $parentId,
+        int $minLevel = 1,
+        int $maxLevel = 6,
+        bool $forceRequestUri = false
+    ): array {
         return $this->collect(
             ($this->itemsInParentQuery)($parentTable, $parentId),
             $minLevel,
-            $maxLevel
+            $maxLevel,
+            1,
+            $forceRequestUri
         );
     }
 
     /**
      * Collect the headings from the parent and return a structured array of the headings.
      *
-     * @param int $articleId The article id.
-     * @param int $minLevel  Min navigation level.
-     * @param int $maxLevel  Max navigation level.
+     * @param int  $articleId       The article id.
+     * @param int  $minLevel        Min navigation level.
+     * @param int  $maxLevel        Max navigation level.
+     * @param bool $forceRequestUri Force the current request URI instead of connected page.
      *
      * @return array
      */
-    public function fromArticle(int $articleId, int $minLevel = 1, int $maxLevel = 6): array
-    {
-        return $this->fromParent('tl_article', $articleId, $minLevel, $maxLevel);
+    public function fromArticle(
+        int $articleId,
+        int $minLevel = 1,
+        int $maxLevel = 6,
+        bool $forceRequestUri = false
+    ): array {
+        return $this->fromParent('tl_article', $articleId, $minLevel, $maxLevel, $forceRequestUri);
     }
 
     /**
      * Collect the headings from a column and return a structured array of the headings.
      *
-     * @param int    $pageId   The id of the page.
-     * @param string $column   The name of the column.
-     * @param int    $minLevel Min navigation level.
-     * @param int    $maxLevel Max navigation level.
+     * @param int    $pageId          The id of the page.
+     * @param string $column          The name of the column.
+     * @param int    $minLevel        Min navigation level.
+     * @param int    $maxLevel        Max navigation level.
+     * @param bool   $forceRequestUri Force the current request URI instead of connected page.
      *
      * @return array
      */
-    public function fromColumn(int $pageId, string $column = 'main', int $minLevel = 1, int $maxLevel = 6): array
-    {
+    public function fromColumn(
+        int $pageId,
+        string $column = 'main',
+        int $minLevel = 1,
+        int $maxLevel = 6,
+        bool $forceRequestUri = false
+    ): array {
         return $this->collect(
             ($this->itemsInColumnQuery)($pageId, $column),
             $minLevel,
-            $maxLevel
+            $maxLevel,
+            1,
+            $forceRequestUri
         );
     }
 }

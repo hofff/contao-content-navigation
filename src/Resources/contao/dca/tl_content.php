@@ -20,7 +20,7 @@ $GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = [ContentDcaLis
  * Palettes
  */
 $GLOBALS['TL_DCA']['tl_content']['palettes']['hofff_content_navigation'] = '{type_legend},type,headline'
-    . ';{toc_legend},hofff_toc_source,hofff_toc_min_level,hofff_toc_max_level'
+    . ';{toc_legend},hofff_toc_source,hofff_toc_min_level,hofff_toc_max_level,hofff_toc_force_request_uri'
     . ';{template_legend:hide},customTpl'
     . ';{protected_legend:hide},protected'
     . ';{expert_legend:hide},guests,cssID,space';
@@ -68,6 +68,15 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_include'] = [
     'inputType' => 'checkbox',
     'exclude'   => true,
     'filter'    => true, 
+    'eval'      => ['tl_class' => 'clr w50'],
+    'sql'       => 'char(1) NOT NULL default \'\'',
+];
+
+$GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_force_request_uri'] = [
+    'label'     => &$GLOBALS['TL_LANG']['tl_content']['hofff_toc_force_request_uri'],
+    'inputType' => 'checkbox',
+    'exclude'   => true,
+    'filter'    => true,
     'eval'      => ['tl_class' => 'clr w50'],
     'sql'       => 'char(1) NOT NULL default \'\'',
 ];

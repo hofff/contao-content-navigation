@@ -87,22 +87,27 @@ final class ContentNavigationElement extends ContentElement
                 (string) $this->ptable,
                 (int) $this->pid,
                 (int) $this->hofff_toc_min_level,
-                (int) $this->hofff_toc_max_level
+                (int) $this->hofff_toc_max_level,
+                (bool) $this->hofff_toc_force_request_uri
             );
         } elseif (is_numeric($this->hofff_toc_source)) {
             $arrItems = $this->contentNavigationBuilder->fromArticle(
                 (int) $this->hofff_toc_source,
                 (int) $this->hofff_toc_min_level,
-                (int) $this->hofff_toc_max_level
+                (int) $this->hofff_toc_max_level,
+                (bool) $this->hofff_toc_force_request_uri
             );
         } else {
             $arrItems = $this->contentNavigationBuilder->fromColumn(
                 (int) $GLOBALS['objPage']->id,
                 $this->hofff_toc_source,
                 (int) $this->hofff_toc_min_level,
-                (int) $this->hofff_toc_max_level
+                (int) $this->hofff_toc_max_level,
+                (bool) $this->hofff_toc_force_request_uri
             );
         }
+
+        \dump($arrItems);
 
         $this->Template->items          = $this->parseItems($arrItems);
         $this->Template->request        = Environment::get('indexFreeRequest');
