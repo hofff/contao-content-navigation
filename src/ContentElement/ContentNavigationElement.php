@@ -107,8 +107,6 @@ final class ContentNavigationElement extends ContentElement
             );
         }
 
-        \dump($arrItems);
-
         $this->Template->items          = $this->parseItems($arrItems);
         $this->Template->request        = Environment::get('indexFreeRequest');
         $this->Template->skipId         = 'skipNavigation' . $this->id;
