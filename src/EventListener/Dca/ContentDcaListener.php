@@ -150,6 +150,7 @@ final class ContentDcaListener
                         continue;
                     }
 
+                    $this->registerSectionLabels($layout);
                     $modules = StringUtil::deserialize($layout->modules);
                     if (empty($modules) || !\is_array($modules)) {
                         continue;
@@ -170,6 +171,7 @@ final class ContentDcaListener
             $statement   = $this->connection->executeQuery('SELECT sections FROM tl_layout WHERE sections!=\'\'');
 
             while ($layout = $statement->fetch(PDO::FETCH_OBJ)) {
+                $this->registerSectionLabels($layout);
                 $arrCustom = StringUtil::deserialize($layout->sections);
 
                 // Add the custom layout sections
@@ -222,5 +224,16 @@ final class ContentDcaListener
         }
 
         return $articles;
+    }
+
+    private function registerSectionLabels(LayoutModel $layout): void
+    {
+        foreach (StringUtil::deserialize($layout->sections, true) as $section) {
+            if (isset($GLOBALS['TL_LANG']['COLS'][$section['id']])) {
+                continue;
+            }
+
+            $GLOBALS['TL_LANG']['COLS'][$section['id']] = $section['title'] ?: $section['id'];
+        }
     }
 }
