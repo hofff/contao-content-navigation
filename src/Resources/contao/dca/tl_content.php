@@ -20,7 +20,8 @@ $GLOBALS['TL_DCA']['tl_content']['palettes']['hofff_content_navigation'] = '{typ
     . ';{toc_legend},hofff_toc_source,hofff_toc_min_level,hofff_toc_max_level,hofff_toc_force_request_uri'
     . ';{template_legend:hide},customTpl'
     . ';{protected_legend:hide},protected'
-    . ';{expert_legend:hide},guests,cssID,space';
+    . ';{expert_legend:hide},guests,cssID,space'
+    . ';{invisible_legend:hide},invisible,start,stop';
 
 /*
  * Fields
