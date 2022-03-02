@@ -187,7 +187,8 @@ final class ContentDcaListener
             $sections  = ['header', 'left', 'right', 'main', 'footer'];
             $statement = $this->connection->executeQuery('SELECT sections FROM tl_layout WHERE sections!=\'\'');
 
-            while ($layout = (object) $statement->fetchAssociative()) {
+            while ($layout = $statement->fetchAssociative()) {
+                $layout = (object) $layout;
                 $this->registerSectionLabels($layout);
                 $arrCustom = StringUtil::deserialize($layout->sections);
 
@@ -241,7 +242,8 @@ final class ContentDcaListener
         $statement->bindValue('id', $contentId);
         $result = $statement->executeQuery();
 
-        while ($row = (object) $result->fetchAssociative()) {
+        while ($row = $result->fetchAssociative()) {
+            $row                = (object) $row;
             $articles[$row->id] = sprintf(
                 '%s [%s]',
                 $row->title,
