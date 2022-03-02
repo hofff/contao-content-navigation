@@ -8,8 +8,8 @@ This extension was previously published as *ce_navigation* and maintained by Tri
 
 ## Requirements
 
- - Contao: >=  4.4 < 5.0
- - PHP: >= 7.1
+ - Contao: ^4.9
+ - PHP: ^7.1 || ^8.0
  
 ## Usage
 
