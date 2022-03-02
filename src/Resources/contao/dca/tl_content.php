@@ -57,7 +57,7 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_max_level'] = [
     'exclude'   => true,
     'options'   => ['1', '2', '3', '4', '5', '6'],
     'eval'      => ['tl_class' => 'w50'],
-    'sql'       => 'int(1) UNSIGNED NOT NULL default 2',
+    'sql'       => 'int(1) UNSIGNED NOT NULL default 6',
 ];
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_include'] = [
