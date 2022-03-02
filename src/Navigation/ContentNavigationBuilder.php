@@ -4,45 +4,31 @@ declare(strict_types=1);
 
 /**
  * Contao Content Navigation
- *
- * @copyright 2010-2011 InfinitySoft
- * @copyright 2018 nickname. Büro für visuelle Kommunikation Nicky Hoff
  */
 
 namespace Hofff\Contao\ContentNavigation\Navigation;
 
 use Contao\Environment;
 use Contao\StringUtil;
-use Hofff\Contao\ContentNavigation\Navigation\Query;
+
 use function array_merge;
 use function count;
+use function current;
 use function next;
 use function prev;
+use function substr;
 
 final class ContentNavigationBuilder
 {
-    /**
-     * @var RelatedPages
-     */
+    /** @var RelatedPages */
     private $relatedPages;
 
-    /**
-     * @var Query\ItemsInParentQuery
-     */
+    /** @var Query\ItemsInParentQuery */
     private $itemsInParentQuery;
 
-    /**
-     * @var Query\ItemsInColumnQuery
-     */
+    /** @var Query\ItemsInColumnQuery */
     private $itemsInColumnQuery;
 
-    /**
-     * ArticleNavigationBuilder constructor.
-     *
-     * @param RelatedPages       $relatedPages
-     * @param Query\ItemsInColumnQuery $itemsInColumnQuery
-     * @param Query\ItemsInParentQuery $itemsInParentQuery
-     */
     public function __construct(
         RelatedPages $relatedPages,
         Query\ItemsInColumnQuery $itemsInColumnQuery,
@@ -56,13 +42,17 @@ final class ContentNavigationBuilder
     /**
      * Collect the headings from content elements and return an structured array of headings.
      *
-     * @param array|object[] $result          $result The database result of content elements.
-     * @param int            $minLevel        Min navigation level.
-     * @param int            $maxLevel        Max navigation level.
-     * @param integer        $currentLevel    The current heading level.
-     * @param bool           $forceRequestUri Force the current request URI instead of connected page.
+     * @param list<object> $result          $result The database result of content elements.
+     * @param int          $minLevel        Min navigation level.
+     * @param int          $maxLevel        Max navigation level.
+     * @param int          $currentLevel    The current heading level.
+     * @param bool         $forceRequestUri Force the current request URI instead of connected page.
      *
-     * @return array
+     * @return list<array<string,mixed>>
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function collect(
         array &$result,
@@ -72,7 +62,6 @@ final class ContentNavigationBuilder
         bool $forceRequestUri = false
     ): array {
         $items = [];
-        $page  = null;
 
         do {
             $item = current($result);
@@ -106,8 +95,8 @@ final class ContentNavigationBuilder
                     } else {
                         $items = $subItems;
                     }
-                } // skip all items, below the max level
-                else {
+                } else {
+                    // skip all items, below the max level
                     while ($item = next($result)) {
                         $headline = StringUtil::deserialize($item->headline, true);
                         $level    = (int) substr($headline['unit'], 1);
@@ -132,19 +121,23 @@ final class ContentNavigationBuilder
                     $headline = StringUtil::deserialize($item->headline, true);
                     $level    = (int) substr($headline['unit'], 1);
 
-                    if ($level >= $minLevel) {
-                        $subItems = $this->collect($result, $minLevel, $maxLevel, $currentLevel + 1, $forceRequestUri);
-
-                        if (count($subItems)) {
-                            $merge[] = $subItems;
-                        }
+                    if ($level < $minLevel) {
+                        continue;
                     }
+
+                    $subItems = $this->collect($result, $minLevel, $maxLevel, $currentLevel + 1, $forceRequestUri);
+
+                    if (! count($subItems)) {
+                        continue;
+                    }
+
+                    $merge[] = $subItems;
                 }
 
                 $items = array_merge(...$merge);
             } else {
                 // add a new item of the same level
-                $pageUrl = ($forceRequestUri || $page->id === $GLOBALS['objPage']->id)
+                $pageUrl = $forceRequestUri || $page->id === $GLOBALS['objPage']->id
                     ? Environment::get('indexFreeRequest')
                     : $page->getFrontendUrl();
 
@@ -171,7 +164,7 @@ final class ContentNavigationBuilder
      * @param int    $maxLevel        Max navigation level.
      * @param bool   $forceRequestUri Force the current request URI instead of connected page.
      *
-     * @return array
+     * @return list<array<string,mixed>>
      */
     public function fromParent(
         string $parentTable,
@@ -180,13 +173,9 @@ final class ContentNavigationBuilder
         int $maxLevel = 6,
         bool $forceRequestUri = false
     ): array {
-        return $this->collect(
-            ($this->itemsInParentQuery)($parentTable, $parentId),
-            $minLevel,
-            $maxLevel,
-            1,
-            $forceRequestUri
-        );
+        $result = ($this->itemsInParentQuery)($parentTable, $parentId);
+
+        return $this->collect($result, $minLevel, $maxLevel, 1, $forceRequestUri);
     }
 
     /**
@@ -197,7 +186,7 @@ final class ContentNavigationBuilder
      * @param int  $maxLevel        Max navigation level.
      * @param bool $forceRequestUri Force the current request URI instead of connected page.
      *
-     * @return array
+     * @return list<array<string,mixed>>
      */
     public function fromArticle(
         int $articleId,
@@ -217,7 +206,7 @@ final class ContentNavigationBuilder
      * @param int    $maxLevel        Max navigation level.
      * @param bool   $forceRequestUri Force the current request URI instead of connected page.
      *
-     * @return array
+     * @return list<array<string,mixed>>
      */
     public function fromColumn(
         int $pageId,
@@ -226,12 +215,8 @@ final class ContentNavigationBuilder
         int $maxLevel = 6,
         bool $forceRequestUri = false
     ): array {
-        return $this->collect(
-            ($this->itemsInColumnQuery)($pageId, $column),
-            $minLevel,
-            $maxLevel,
-            1,
-            $forceRequestUri
-        );
+        $result = ($this->itemsInColumnQuery)($pageId, $column);
+
+        return $this->collect($result, $minLevel, $maxLevel, 1, $forceRequestUri);
     }
 }

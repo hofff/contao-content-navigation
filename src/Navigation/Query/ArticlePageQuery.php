@@ -20,16 +20,16 @@ WHERE a.id = :articleId
 LIMIT 0,1
 SQL;
 
-
     public function __invoke(int $articleId): ?PageModel
     {
         $statement = $this->connection->prepare(self::QUERY);
         $statement->bindValue('articleId', $articleId);
+        $result = $statement->executeQuery();
 
-        if (!$statement->execute() || $statement->rowCount() === 0) {
+        if ($result->rowCount() === 0) {
             return null;
         }
 
-        return $this->createPageModel($statement);
+        return $this->createPageModel($result);
     }
 }

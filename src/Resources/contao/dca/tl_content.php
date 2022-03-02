@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 /**
  * Contao Content Navigation
- *
- * @copyright 2010-2011 InfinitySoft
- * @copyright 2018 nickname. Büro für visuelle Kommunikation Nicky Hoff
  */
 
 use Hofff\Contao\ContentNavigation\EventListener\Dca\ContentDcaListener;
@@ -38,7 +35,7 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_source'] = [
         'mandatory' => false,
         'chosen' => true,
         'includeBlankOption' => true,
-        'blankOptionLabel' => &$GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_parent']
+        'blankOptionLabel' => &$GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_parent'],
     ],
     'sql'              => 'varchar(32) NOT NULL default \'\'',
 ];
@@ -67,7 +64,7 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_include'] = [
     'label'     => &$GLOBALS['TL_LANG']['tl_content']['hofff_toc_include'],
     'inputType' => 'checkbox',
     'exclude'   => true,
-    'filter'    => true, 
+    'filter'    => true,
     'eval'      => ['tl_class' => 'clr w50'],
     'sql'       => 'char(1) NOT NULL default \'\'',
 ];
@@ -83,5 +80,5 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_force_request_uri'] = [
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['cssID']['save_callback'][] = [
     ContentDcaListener::class,
-    'generateCssId'
+    'generateCssId',
 ];

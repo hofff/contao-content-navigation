@@ -1,9 +1,8 @@
-# IDE
-.project
-.buildpath
-.settings
-.idea
-
 # Composer
 /vendor/
 composer.lock
+
+# PHPCQ and related tools
+.phpcq.yaml
+/.phpcq
+.phpcs-cache

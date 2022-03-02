@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 /**
  * Contao Content Navigation
- *
- * @copyright 2010-2011 InfinitySoft
- * @copyright 2018 nickname. Büro für visuelle Kommunikation Nicky Hoff
  */
 
 namespace Hofff\Contao\ContentNavigation\ContentElement;
@@ -20,27 +17,42 @@ use Contao\Input;
 use Contao\StringUtil;
 use Hofff\Contao\ContentNavigation\Navigation\ContentNavigationBuilder;
 use Patchwork\Utf8;
+
+use function assert;
 use function count;
+use function defined;
+use function is_numeric;
 use function sprintf;
 
+/**
+ * @property int|string      $pid
+ * @property int|string      $hofff_toc_max_level
+ * @property int|string      $hofff_toc_min_level
+ * @property int|string|bool $hofff_toc_force_request_uri
+ * @property string          $hofff_toc_source
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 final class ContentNavigationElement extends ContentElement
 {
     /** @var string */
     protected $strTemplate = 'ce_hofff_content_navigation';
 
     /** @var ContentNavigationBuilder */
-    private $contentNavigationBuilder;
+    private $navigationBuilder;
 
     public function __construct(ContentModel $objElement, string $strColumn = 'main')
     {
         parent::__construct($objElement, $strColumn);
 
-        $this->contentNavigationBuilder = self::getContainer()->get(ContentNavigationBuilder::class);
+        $navigationBuilder = self::getContainer()->get(ContentNavigationBuilder::class);
+        assert($navigationBuilder instanceof ContentNavigationBuilder);
+        $this->navigationBuilder = $navigationBuilder;
     }
 
+    /** @SuppressWarnings(PHPMD.Superglobals) */
     public function generate(): string
     {
-        if (TL_MODE === 'BE') {
+        if (defined('TL_MODE') && TL_MODE === 'BE') {
             $template           = new BackendTemplate('be_wildcard');
             $template->wildcard = '### ' . Utf8::strtoupper($GLOBALS['TL_LANG']['CTE'][$this->type][0]) . ' ###';
             $template->title    = $this->headline;
@@ -58,9 +70,10 @@ final class ContentNavigationElement extends ContentElement
         return parent::generate();
     }
 
+    /** @param list<array<string,mixed>> $items */
     private function parseItems(array $items, int $level = 1): string
     {
-        if (!count($items)) {
+        if (! count($items)) {
             return '';
         }
 
@@ -68,6 +81,7 @@ final class ContentNavigationElement extends ContentElement
             if (isset($item['subitems'])) {
                 $item['subitems'] = $this->parseItems($item['subitems'], $level + 1);
             }
+
             $item['class'] = '';
         }
 
@@ -80,25 +94,26 @@ final class ContentNavigationElement extends ContentElement
         return $tpl->parse();
     }
 
+    /** @SuppressWarnings(PHPMD.Superglobals) */
     protected function compile(): void
     {
         if ($this->hofff_toc_source === '') {
-            $arrItems = $this->contentNavigationBuilder->fromParent(
-                (string) $this->ptable,
+            $arrItems = $this->navigationBuilder->fromParent(
+                $this->ptable,
                 (int) $this->pid,
                 (int) $this->hofff_toc_min_level,
                 (int) $this->hofff_toc_max_level,
                 (bool) $this->hofff_toc_force_request_uri
             );
         } elseif (is_numeric($this->hofff_toc_source)) {
-            $arrItems = $this->contentNavigationBuilder->fromArticle(
+            $arrItems = $this->navigationBuilder->fromArticle(
                 (int) $this->hofff_toc_source,
                 (int) $this->hofff_toc_min_level,
                 (int) $this->hofff_toc_max_level,
                 (bool) $this->hofff_toc_force_request_uri
             );
         } else {
-            $arrItems = $this->contentNavigationBuilder->fromColumn(
+            $arrItems = $this->navigationBuilder->fromColumn(
                 (int) $GLOBALS['objPage']->id,
                 $this->hofff_toc_source,
                 (int) $this->hofff_toc_min_level,

@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace Hofff\Contao\ContentNavigation\Navigation\Query;
 
-use Contao\PageModel;
 use Contao\Model\Registry;
+use Contao\PageModel;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Statement;
-use PDO;
+use Doctrine\DBAL\ForwardCompatibility\Result as ForwardCompatibilityResult;
+use Doctrine\DBAL\Result;
+use InvalidArgumentException;
 
 abstract class AbstractPageQuery
 {
-    /**
-     * @var Connection
-     */
+    /** @var Connection */
     protected $connection;
 
     public function __construct(Connection $connection)
@@ -22,9 +21,15 @@ abstract class AbstractPageQuery
         $this->connection = $connection;
     }
 
-    protected function createPageModel(Statement $statement): PageModel
+    /**
+     * @param Result|ForwardCompatibilityResult $statement
+     */
+    protected function createPageModel($statement): PageModel
     {
-        $row = $statement->fetch(PDO::FETCH_ASSOC);
+        $row = $statement->fetchAssociative();
+        if ($row === false) {
+            throw new InvalidArgumentException('No page given');
+        }
 
         $registry = Registry::getInstance();
         $model    = $registry->fetch(PageModel::getTable(), $row['id']);

@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Hofff\Contao\ContentNavigation\Navigation\Query;
 
 use Contao\PageModel;
-use function var_dump;
+
+use function is_int;
 
 final class JumpToPageQuery extends AbstractPageQuery
 {
     public function __invoke(int $parentId, string $parentTable, string $categoryTable): ?PageModel
     {
-        $statement = $this->connection->createQueryBuilder()
+        $result = $this->connection->createQueryBuilder()
             ->select('p.*')
             ->from($categoryTable, 'c')
             ->innerJoin('c', $parentTable, 't', 'c.id=t.pid')
@@ -21,10 +22,10 @@ final class JumpToPageQuery extends AbstractPageQuery
             ->setParameter('parentId', $parentId)
             ->execute();
 
-        if ($statement->rowCount() === 0) {
+        if (is_int($result) || $result->rowCount() === 0) {
             return null;
         }
 
-        return $this->createPageModel($statement);
+        return $this->createPageModel($result);
     }
 }

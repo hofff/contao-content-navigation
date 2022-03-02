@@ -9,6 +9,8 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Hofff\Contao\ContentNavigation\Request\PreviewModeDetector;
 
+use function sprintf;
+
 abstract class AbstractItemQuery
 {
     /**
@@ -35,7 +37,7 @@ abstract class AbstractItemQuery
         QueryBuilder $builder,
         string $alias = 'c',
         string $column = 'invisible',
-        $inverted = true
+        bool $inverted = true
     ): void {
         if ($this->previewMode->isEnabled()) {
             return;
@@ -47,7 +49,7 @@ abstract class AbstractItemQuery
         $builder->andWhere(sprintf('(%1$s.stop=:%1$s_empty OR %1$s.stop>:%1$s_stop)', $alias));
         $builder->andWhere(sprintf('%1$s.%2$s=:%1$s_visible', $alias, $column));
         $builder->setParameter($alias . '_start', $time);
-        $builder->setParameter($alias . '_stop', ($time + 60));
+        $builder->setParameter($alias . '_stop', $time + 60);
         $builder->setParameter($alias . '_empty', '');
         $builder->setParameter($alias . '_visible', $inverted ? '' : '1');
     }

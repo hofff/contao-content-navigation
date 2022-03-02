@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Hofff\Contao\ContentNavigation\Navigation\Query;
 
-use PDO;
+use function array_map;
+use function is_int;
 
 final class ItemsInParentQuery extends AbstractItemQuery
 {
+    /** @return list<object> */
     public function __invoke(string $parentTable, int $parentId): array
     {
         $builder = $this->connection->createQueryBuilder()
@@ -31,6 +33,16 @@ final class ItemsInParentQuery extends AbstractItemQuery
 
         $this->addPublishedCondition($builder);
 
-        return $builder->execute()->fetchAll(PDO::FETCH_OBJ);
+        $result = $builder->execute();
+        if (is_int($result)) {
+            return [];
+        }
+
+        return array_map(
+            static function (array $row): object {
+                return (object) $row;
+            },
+            $result->fetchAllAssociative()
+        );
     }
 }

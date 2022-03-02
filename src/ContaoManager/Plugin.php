@@ -12,12 +12,13 @@ use Hofff\Contao\ContentNavigation\HofffContentNavigationBundle;
 
 final class Plugin implements BundlePluginInterface
 {
+    /** {@inheritDoc} */
     public function getBundles(ParserInterface $parser): array
     {
         return [
             BundleConfig::create(HofffContentNavigationBundle::class)
                 ->setLoadAfter([ContaoCoreBundle::class])
-                ->setReplace(['ce_navigation'])
+                ->setReplace(['ce_navigation']),
         ];
     }
 }

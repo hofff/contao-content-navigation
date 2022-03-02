@@ -7,6 +7,7 @@ namespace Hofff\Contao\ContentNavigation\Navigation;
 use Contao\PageModel;
 use Hofff\Contao\ContentNavigation\Navigation\Query\ArticlePageQuery;
 use Hofff\Contao\ContentNavigation\Navigation\Query\JumpToPageQuery;
+
 use function array_key_exists;
 
 final class RelatedPages
@@ -17,7 +18,7 @@ final class RelatedPages
     /** @var JumpToPageQuery */
     private $jumpToPageQuery;
 
-    /** @var array<int,PageModel|null> */
+    /** @var array<string,array<int,PageModel|null>> */
     private $cache = [];
 
     /**
@@ -28,11 +29,7 @@ final class RelatedPages
     private $jumpToMapping;
 
     /**
-     * RelatedPages constructor.
-     *
-     * @param ArticlePageQuery $articlePageQuery
-     * @param JumpToPageQuery  $jumpToPageQuery
-     * @param array            $jumpToMapping
+     * @param array<string,string> $jumpToMapping
      */
     public function __construct(
         ArticlePageQuery $articlePageQuery,
@@ -49,7 +46,7 @@ final class RelatedPages
      *
      * @param object $item
      *
-     * @return PageModel|null
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function ofItem($item): ?PageModel
     {
@@ -70,14 +67,10 @@ final class RelatedPages
 
     /**
      * Get article of a page.
-     *
-     * @param int $articleId
-     *
-     * @return PageModel|null
      */
     private function getArticlePage(int $articleId): ?PageModel
     {
-        if (!isset($this->cache['tl_article']) || !array_key_exists($articleId, $this->cache['tl_article'])) {
+        if (! isset($this->cache['tl_article']) || ! array_key_exists($articleId, $this->cache['tl_article'])) {
             $this->cache['tl_article'][$articleId] = ($this->articlePageQuery)($articleId);
         }
 
@@ -86,7 +79,7 @@ final class RelatedPages
 
     private function getJumpToPage(int $parentId, string $parentTable, string $categoryTable): ?PageModel
     {
-        if (!isset($this->cache[$parentTable]) || !array_key_exists($parentId, $this->cache[$parentTable])) {
+        if (! isset($this->cache[$parentTable]) || ! array_key_exists($parentId, $this->cache[$parentTable])) {
             $this->cache[$parentTable][$parentId] = ($this->jumpToPageQuery)($parentId, $parentTable, $categoryTable);
         }
 

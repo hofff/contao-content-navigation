@@ -12,9 +12,16 @@ use Contao\LayoutModel;
 use Contao\StringUtil;
 use Doctrine\DBAL\Connection;
 use Hofff\Contao\ContentNavigation\Navigation\Query\ArticlePageQuery;
-use function is_array;
 use Patchwork\Utf8;
-use PDO;
+
+use function assert;
+use function html_entity_decode;
+use function is_array;
+use function is_numeric;
+use function sprintf;
+use function trim;
+
+use const ENT_QUOTES;
 
 final class ContentDcaListener
 {
@@ -25,23 +32,12 @@ final class ContentDcaListener
      */
     private $connection;
 
-    /**
-     * @var ArticlePageQuery
-     */
+    /** @var ArticlePageQuery */
     private $articlePageQuery;
 
-    /**
-     * @var SlugGenerator
-     */
+    /** @var SlugGenerator */
     private $cssIdGenerator;
 
-    /**
-     * ContentDcaListener constructor.
-     *
-     * @param Connection       $connection
-     * @param ArticlePageQuery $articlePageQuery
-     * @param SlugGenerator    $cssIdGenerator
-     */
     public function __construct(
         Connection $connection,
         ArticlePageQuery $articlePageQuery,
@@ -52,10 +48,12 @@ final class ContentDcaListener
         $this->cssIdGenerator   = $cssIdGenerator;
     }
 
+    /** @SuppressWarnings(PHPMD.Superglobals) */
     public function adjustPalettes(): void
     {
-        if (!isset($GLOBALS['TL_DCA']['tl_content']['palettes'])
-            || !is_array($GLOBALS['TL_DCA']['tl_content']['palettes'])
+        if (
+            ! isset($GLOBALS['TL_DCA']['tl_content']['palettes'])
+            || ! is_array($GLOBALS['TL_DCA']['tl_content']['palettes'])
         ) {
             return;
         }
@@ -75,42 +73,54 @@ final class ContentDcaListener
     /**
      * Return all content elements as array.
      *
-     * @param DataContainer $dataContainer
+     * @return array<string, array<string|int,string>>
      *
-     * @return array
-     *
-     * @throws \Doctrine\DBAL\DBALException
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function sourceOptions(DataContainer $dataContainer): array
     {
-        if ($GLOBALS['TL_DCA']['tl_content']['config']['ptable'] !== 'tl_article') {
+        if (
+            $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] !== 'tl_article'
+            || $dataContainer->activeRecord === null
+        ) {
             return [];
         }
 
         return [
-            $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_column'] => $this->activeSections(
+            (string) $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_column'] => $this->activeSections(
                 (int) $dataContainer->activeRecord->pid
             ),
-            $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_page']   => $this->pageArticles(
+            (string) $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_page']   => $this->pageArticles(
                 (int) $dataContainer->id
-            )
+            ),
         ];
     }
 
-    public function generateCssId($value, $dataContainer): array
+    /**
+     * @param mixed $value
+     *
+     * @return array{0:string|null, 1:string|null}
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
+    public function generateCssId($value, ?DataContainer $dataContainer): array
     {
         $value = StringUtil::deserialize($value, true);
 
-        if (!$dataContainer
-            || !$dataContainer->activeRecord
-            || !$dataContainer->activeRecord->hofff_toc_include
+        if (
+            $dataContainer === null
+            || ! $dataContainer->activeRecord
+            || ! $dataContainer->activeRecord->hofff_toc_include
             || $value[0]
         ) {
             return $value;
         }
 
+        // Psalm does not understand the if condition above
+        assert($dataContainer !== null && $dataContainer->activeRecord !== null);
+
         $headline = StringUtil::deserialize($dataContainer->activeRecord->headline, true);
-        if (!$headline['value']) {
+        if (! $headline['value']) {
             return $value;
         }
 
@@ -128,6 +138,11 @@ final class ContentDcaListener
         return $value;
     }
 
+    /**
+     * @return list<string>
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     private function activeSections(int $articleId): array
     {
         // Show only active sections
@@ -140,7 +155,7 @@ final class ContentDcaListener
 
                 // Get the layout sections
                 foreach (['layout', 'mobileLayout'] as $key) {
-                    if (!$page->$key) {
+                    if (! $page->$key) {
                         continue;
                     }
 
@@ -152,35 +167,41 @@ final class ContentDcaListener
 
                     $this->registerSectionLabels($layout);
                     $modules = StringUtil::deserialize($layout->modules);
-                    if (empty($modules) || !\is_array($modules)) {
+                    if (empty($modules) || ! is_array($modules)) {
                         continue;
                     }
 
                     // Find all sections with an article module (see #6094)
                     foreach ($modules as $module) {
-                        if ($module['mod'] == 0 && $module['enable']) {
-                            $sections[] = $module['col'];
+                        if ($module['mod'] !== 0 || ! $module['enable']) {
+                            continue;
                         }
+
+                        $sections[] = $module['col'];
                     }
                 }
             }
         } else {
             // Show all sections (e.g. "override all" mode)
 
-            $sections = ['header', 'left', 'right', 'main', 'footer'];
-            $statement   = $this->connection->executeQuery('SELECT sections FROM tl_layout WHERE sections!=\'\'');
+            $sections  = ['header', 'left', 'right', 'main', 'footer'];
+            $statement = $this->connection->executeQuery('SELECT sections FROM tl_layout WHERE sections!=\'\'');
 
-            while ($layout = $statement->fetch(PDO::FETCH_OBJ)) {
+            while ($layout = (object) $statement->fetchAssociative()) {
                 $this->registerSectionLabels($layout);
                 $arrCustom = StringUtil::deserialize($layout->sections);
 
                 // Add the custom layout sections
-                if (!empty($arrCustom) && \is_array($arrCustom)) {
-                    foreach ($arrCustom as $v) {
-                        if (!empty($v['id'])) {
-                            $sections[] = $v['id'];
-                        }
+                if (empty($arrCustom) || ! is_array($arrCustom)) {
+                    continue;
+                }
+
+                foreach ($arrCustom as $v) {
+                    if (empty($v['id'])) {
+                        continue;
                     }
+
+                    $sections[] = $v['id'];
                 }
             }
         }
@@ -188,6 +209,11 @@ final class ContentDcaListener
         return Backend::convertLayoutSectionIdsToAssociativeArray($sections);
     }
 
+    /**
+     * @return array<string|int,string>
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
     private function pageArticles(int $contentId): array
     {
         $articles  = [];
@@ -213,9 +239,9 @@ final class ContentDcaListener
         );
 
         $statement->bindValue('id', $contentId);
-        $statement->execute();
+        $result = $statement->executeQuery();
 
-        while ($row = $statement->fetch(PDO::FETCH_OBJ)) {
+        while ($row = (object) $result->fetchAssociative()) {
             $articles[$row->id] = sprintf(
                 '%s [%s]',
                 $row->title,
@@ -226,7 +252,12 @@ final class ContentDcaListener
         return $articles;
     }
 
-    private function registerSectionLabels(LayoutModel $layout): void
+    /**
+     * @param object|LayoutModel $layout
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
+    private function registerSectionLabels($layout): void
     {
         foreach (StringUtil::deserialize($layout->sections, true) as $section) {
             if (isset($GLOBALS['TL_LANG']['COLS'][$section['id']])) {
