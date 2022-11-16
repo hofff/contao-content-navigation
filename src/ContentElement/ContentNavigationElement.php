@@ -16,7 +16,7 @@ use Contao\FrontendTemplate;
 use Contao\Input;
 use Contao\StringUtil;
 use Hofff\Contao\ContentNavigation\Navigation\ContentNavigationBuilder;
-use Patchwork\Utf8;
+use Symfony\Polyfill\Mbstring\Mbstring;
 
 use function assert;
 use function count;
@@ -54,7 +54,7 @@ final class ContentNavigationElement extends ContentElement
     {
         if (defined('TL_MODE') && TL_MODE === 'BE') {
             $template           = new BackendTemplate('be_wildcard');
-            $template->wildcard = '### ' . Utf8::strtoupper($GLOBALS['TL_LANG']['CTE'][$this->type][0]) . ' ###';
+            $template->wildcard = '### ' . Mbstring::mb_strtoupper($GLOBALS['TL_LANG']['CTE'][$this->type][0], 'UTF-8') . ' ###';
             $template->title    = $this->headline;
             $template->id       = $this->id;
             $template->link     = $GLOBALS['TL_LANG']['CTE'][$this->type][0];

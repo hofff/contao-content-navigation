@@ -12,7 +12,7 @@ use Contao\LayoutModel;
 use Contao\StringUtil;
 use Doctrine\DBAL\Connection;
 use Hofff\Contao\ContentNavigation\Navigation\Query\ArticlePageQuery;
-use Patchwork\Utf8;
+use Symfony\Polyfill\Mbstring\Mbstring;
 
 use function assert;
 use function html_entity_decode;
@@ -133,7 +133,7 @@ final class ContentDcaListener
             $cssId = 'id-' . $cssId;
         }
 
-        $value[0] = Utf8::strtolower(trim($cssId, '-'));
+        $value[0] = Mbstring::mb_strtolower(trim($cssId, '-'), 'UTF-8');
 
         return $value;
     }
