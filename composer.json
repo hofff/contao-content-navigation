@@ -25,19 +25,21 @@
   ],
   "homepage": "https://www.hofff.com",
   "require": {
-    "php": "^7.2 || ^8.0",
-    "ext-pdo": "*",
+    "php": "^8.1",
     "ausi/slug-generator": "^1.1",
-    "contao/core-bundle": "^4.9",
-    "doctrine/dbal": "^2.11 || ^3.0",
-    "patchwork/utf8": "^1.2",
-    "symfony/config": "^4.4 || ^5.1",
-    "symfony/dependency-injection": "^4.4 || ^5.1",
-    "symfony/http-kernel": "^4.4 || ^5.1"
+    "contao/core-bundle": "^4.13 || ^5.3",
+    "doctrine/dbal": "^3.8",
+    "symfony/config": "^5.4 || ^6.4",
+    "symfony/dependency-injection": "^5.4 || ^6.4",
+    "symfony/http-foundation": "^5.4 || ^6.4",
+    "symfony/http-kernel": "^5.4 || ^6.4",
+    "symfony/routing": "^5.4 || ^6.4",
+    "symfony/string": "^5.4 || ^6.4",
+    "symfony/translation-contracts": "^1.1 || ^2.0 || ^3.0"
   },
   "require-dev": {
     "contao/manager-plugin": "^2.1",
-    "doctrine/coding-standard": "^9.0.",
+    "doctrine/coding-standard": "^12.0",
     "phpcq/runner-bootstrap": "^1.0@dev"
   },
   "conflict": {
@@ -52,13 +54,14 @@
     "allow-plugins": {
       "contao-components/installer": false,
       "contao/manager-plugin": true,
-      "dealerdirect/phpcodesniffer-composer-installer": true
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "php-http/discovery": true
     },
     "sort-packages": true
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "1.1.x-dev"
+      "dev-master": "2.0.x-dev"
     },
     "contao-manager-plugin": "Hofff\\Contao\\ContentNavigation\\ContaoManager\\Plugin"
   }

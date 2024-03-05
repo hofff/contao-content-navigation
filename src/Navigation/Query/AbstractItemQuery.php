@@ -4,42 +4,28 @@ declare(strict_types=1);
 
 namespace Hofff\Contao\ContentNavigation\Navigation\Query;
 
+use Contao\CoreBundle\Security\Authentication\Token\TokenChecker;
 use Contao\Date;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Hofff\Contao\ContentNavigation\Request\PreviewModeDetector;
 
 use function sprintf;
 
 abstract class AbstractItemQuery
 {
-    /**
-     * Database connection.
-     *
-     * @var Connection
-     */
-    protected $connection;
-
-    /**
-     * Preview mode detector.
-     *
-     * @var PreviewModeDetector
-     */
-    protected $previewMode;
-
-    public function __construct(Connection $connection, PreviewModeDetector $previewMode)
-    {
-        $this->connection  = $connection;
-        $this->previewMode = $previewMode;
+    public function __construct(
+        protected Connection $connection,
+        protected TokenChecker $tokenChecker,
+    ) {
     }
 
     protected function addPublishedCondition(
         QueryBuilder $builder,
         string $alias = 'c',
         string $column = 'invisible',
-        bool $inverted = true
+        bool $inverted = true,
     ): void {
-        if ($this->previewMode->isEnabled()) {
+        if ($this->tokenChecker->isPreviewMode()) {
             return;
         }
 

@@ -5,7 +5,7 @@
         hideExternalErrors="true"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns="https://getpsalm.org/schema/config"
-        xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+        xsi:schemaLocation="https://getpsalm.org/schema/config https://getpsalm.org/schema/config"
 >
     <projectFiles>
         <directory name="src"/>
@@ -20,24 +20,28 @@
                 <referencedMethod name="Contao\CoreBundle\Framework\ContaoFramework::getAdapter"/>
             </errorLevel>
         </InternalMethod>
+        <DeprecatedClass>
+            <errorLevel type="suppress">
+                <referencedClass name="Contao\Template"/>
+            </errorLevel>
+        </DeprecatedClass>
         <DeprecatedMethod>
             <errorLevel type="suppress">
-                <!-- Required as long as we support doctrine/dbal ^2.11 | Contao 4.9 -->
-                <referencedMethod name="Doctrine\DBAL\Query\QueryBuilder::execute"/>
+                <referencedMethod name="Contao\PageModel::getFrontendUrl"/>
             </errorLevel>
         </DeprecatedMethod>
-        <UndefinedDocblockClass>
+        <UndefinedMagicPropertyFetch>
             <errorLevel type="suppress">
-                <!-- Depending if doctrine/dbal 2 or 3 is installed -->
-                <referencedClass name="Doctrine\DBAL\ForwardCompatibility\Result"/>
-                <referencedClass name="Doctrine\DBAL\Result"/>
+                <referencedProperty name="Contao\DataContainer::$activeRecord"/>
             </errorLevel>
-        </UndefinedDocblockClass>
+        </UndefinedMagicPropertyFetch>
     </issueHandlers>
 
     <universalObjectCrates>
         <class name="Contao\BackendTemplate"/>
         <class name="Contao\FrontendTemplate"/>
+        <class name="Contao\Template"/>
+        <class name="Contao\ContentModel"/>
         <class name="Contao\PageModel"/>
     </universalObjectCrates>
 </psalm>

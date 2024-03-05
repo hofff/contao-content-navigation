@@ -17,15 +17,25 @@
     </parameters>
 
     <services>
+        <defaults public="false" autoconfigure="false" autowire="false"/>
+
+        <!-- Content element -->
+        <service id="Hofff\Contao\ContentNavigation\ContentElement\ContentNavigationElement" autoconfigure="true">
+            <argument type="service" id="Hofff\Contao\ContentNavigation\Navigation\ContentNavigationBuilder"/>
+            <argument type="service" id="router"/>
+            <argument type="service" id="translator"/>
+            <argument type="service" id="contao.csrf.token_manager"/>
+        </service>
+
         <!-- Queries -->
         <service id="Hofff\Contao\ContentNavigation\Navigation\Query\ItemsInColumnQuery">
             <argument type="service" id="database_connection" />
-            <argument type="service" id="Hofff\Contao\ContentNavigation\Request\PreviewModeDetector" />
+            <argument type="service" id="contao.security.token_checker" />
         </service>
 
         <service id="Hofff\Contao\ContentNavigation\Navigation\Query\ItemsInParentQuery">
             <argument type="service" id="database_connection" />
-            <argument type="service" id="Hofff\Contao\ContentNavigation\Request\PreviewModeDetector" />
+            <argument type="service" id="contao.security.token_checker" />
         </service>
 
         <service id="Hofff\Contao\ContentNavigation\Navigation\Query\ArticlePageQuery">
@@ -37,14 +47,14 @@
         </service>
 
         <!-- Table of contents builder -->
-        <service id="Hofff\Contao\ContentNavigation\Navigation\ContentNavigationBuilder" public="true">
+        <service id="Hofff\Contao\ContentNavigation\Navigation\ContentNavigationBuilder">
             <argument type="service" id="Hofff\Contao\ContentNavigation\Navigation\RelatedPages" />
             <argument type="service" id="Hofff\Contao\ContentNavigation\Navigation\Query\ItemsInColumnQuery" />
             <argument type="service" id="Hofff\Contao\ContentNavigation\Navigation\Query\ItemsInParentQuery" />
         </service>
 
         <!-- Dca event listeners -->
-        <service id="Hofff\Contao\ContentNavigation\EventListener\Dca\ContentDcaListener" public="true">
+        <service id="Hofff\Contao\ContentNavigation\EventListener\Dca\ContentDcaListener" autoconfigure="true">
             <argument type="service" id="database_connection" />
             <argument type="service" id="Hofff\Contao\ContentNavigation\Navigation\Query\ArticlePageQuery" />
             <argument type="service" id="hofff.contao.content_navigation.css_id_generator" />
@@ -61,7 +71,5 @@
         <service id="hofff.contao.content_navigation.css_id_generator" class="Ausi\SlugGenerator\SlugGenerator">
             <argument>%hofff.contao.content_navigation.css_id_generator.options%</argument>
         </service>
-
-        <service id="Hofff\Contao\ContentNavigation\Request\PreviewModeDetector" />
     </services>
 </container>

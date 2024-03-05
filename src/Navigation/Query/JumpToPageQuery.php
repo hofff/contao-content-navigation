@@ -6,11 +6,9 @@ namespace Hofff\Contao\ContentNavigation\Navigation\Query;
 
 use Contao\PageModel;
 
-use function is_int;
-
 final class JumpToPageQuery extends AbstractPageQuery
 {
-    public function __invoke(int $parentId, string $parentTable, string $categoryTable): ?PageModel
+    public function __invoke(int $parentId, string $parentTable, string $categoryTable): PageModel|null
     {
         $result = $this->connection->createQueryBuilder()
             ->select('p.*')
@@ -20,9 +18,9 @@ final class JumpToPageQuery extends AbstractPageQuery
             ->where('t.id=:parentId')
             ->setMaxResults(1)
             ->setParameter('parentId', $parentId)
-            ->execute();
+            ->executeQuery();
 
-        if (is_int($result) || $result->rowCount() === 0) {
+        if ($result->rowCount() === 0) {
             return null;
         }
 

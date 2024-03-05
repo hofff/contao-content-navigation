@@ -20,7 +20,7 @@ WHERE a.id = :articleId
 LIMIT 0,1
 SQL;
 
-    public function __invoke(int $articleId): ?PageModel
+    public function __invoke(int $articleId): PageModel|null
     {
         $statement = $this->connection->prepare(self::QUERY);
         $statement->bindValue('articleId', $articleId);

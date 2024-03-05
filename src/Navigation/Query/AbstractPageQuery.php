@@ -7,24 +7,16 @@ namespace Hofff\Contao\ContentNavigation\Navigation\Query;
 use Contao\Model\Registry;
 use Contao\PageModel;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\ForwardCompatibility\Result as ForwardCompatibilityResult;
 use Doctrine\DBAL\Result;
 use InvalidArgumentException;
 
 abstract class AbstractPageQuery
 {
-    /** @var Connection */
-    protected $connection;
-
-    public function __construct(Connection $connection)
+    public function __construct(protected Connection $connection)
     {
-        $this->connection = $connection;
     }
 
-    /**
-     * @param Result|ForwardCompatibilityResult $statement
-     */
-    protected function createPageModel($statement): PageModel
+    protected function createPageModel(Result $statement): PageModel
     {
         $row = $statement->fetchAssociative();
         if ($row === false) {

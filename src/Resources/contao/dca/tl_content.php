@@ -2,17 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * Contao Content Navigation
- */
-
-use Hofff\Contao\ContentNavigation\EventListener\Dca\ContentDcaListener;
-
-/*
- * Config
- */
-$GLOBALS['TL_DCA']['tl_content']['config']['onload_callback'][] = [ContentDcaListener::class, 'adjustPalettes'];
-
 /*
  * Palettes
  */
@@ -31,7 +20,6 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_source'] = [
     'default'          => 'main',
     'exclude'          => true,
     'inputType'        => 'select',
-    'options_callback' => [ContentDcaListener::class, 'sourceOptions'],
     'eval'             => [
         'mandatory' => false,
         'chosen' => true,
@@ -77,9 +65,4 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_force_request_uri'] = [
     'filter'    => true,
     'eval'      => ['tl_class' => 'clr w50'],
     'sql'       => 'char(1) NOT NULL default \'\'',
-];
-
-$GLOBALS['TL_DCA']['tl_content']['fields']['cssID']['save_callback'][] = [
-    ContentDcaListener::class,
-    'generateCssId',
 ];

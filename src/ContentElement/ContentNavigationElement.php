@@ -2,72 +2,82 @@
 
 declare(strict_types=1);
 
-/**
- * Contao Content Navigation
- */
-
 namespace Hofff\Contao\ContentNavigation\ContentElement;
 
 use Contao\BackendTemplate;
-use Contao\ContentElement;
 use Contao\ContentModel;
+use Contao\CoreBundle\Controller\ContentElement\AbstractContentElementController;
+use Contao\CoreBundle\Csrf\ContaoCsrfTokenManager;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsContentElement;
 use Contao\Environment;
 use Contao\FrontendTemplate;
 use Contao\Input;
 use Contao\StringUtil;
+use Contao\Template;
 use Hofff\Contao\ContentNavigation\Navigation\ContentNavigationBuilder;
-use Patchwork\Utf8;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-use function assert;
 use function count;
-use function defined;
 use function is_numeric;
-use function sprintf;
 
 /**
- * @property int|string      $pid
- * @property int|string      $hofff_toc_max_level
- * @property int|string      $hofff_toc_min_level
- * @property int|string|bool $hofff_toc_force_request_uri
- * @property string          $hofff_toc_source
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @psalm-suppress PropertyNotSetInConstructor
  */
-final class ContentNavigationElement extends ContentElement
+#[AsContentElement('hofff_content_navigation', 'links', 'ce_hofff_content_navigation')]
+final class ContentNavigationElement extends AbstractContentElementController
 {
-    /** @var string */
-    protected $strTemplate = 'ce_hofff_content_navigation';
-
-    /** @var ContentNavigationBuilder */
-    private $navigationBuilder;
-
-    public function __construct(ContentModel $objElement, string $strColumn = 'main')
-    {
-        parent::__construct($objElement, $strColumn);
-
-        $navigationBuilder = self::getContainer()->get(ContentNavigationBuilder::class);
-        assert($navigationBuilder instanceof ContentNavigationBuilder);
-        $this->navigationBuilder = $navigationBuilder;
+    public function __construct(
+        private readonly ContentNavigationBuilder $navigationBuilder,
+        private readonly RouterInterface $router,
+        private readonly TranslatorInterface $translator,
+        private readonly ContaoCsrfTokenManager $csrfTokenManager,
+    ) {
     }
 
     /** @SuppressWarnings(PHPMD.Superglobals) */
-    public function generate(): string
+    protected function getResponse(Template $template, ContentModel $model, Request $request): Response
     {
-        if (defined('TL_MODE') && TL_MODE === 'BE') {
-            $template           = new BackendTemplate('be_wildcard');
-            $template->wildcard = '### ' . Utf8::strtoupper($GLOBALS['TL_LANG']['CTE'][$this->type][0]) . ' ###';
-            $template->title    = $this->headline;
-            $template->id       = $this->id;
-            $template->link     = $GLOBALS['TL_LANG']['CTE'][$this->type][0];
-            $template->href     = sprintf(
-                Environment::get('indexFreeRequest') . 'contao?do=%s&amp;table=tl_content&amp;act=edit&amp;id=%s',
-                Input::get('do'),
-                $this->id
-            );
-
-            return $template->parse();
+        if ($this->isBackendScope($request)) {
+            return $this->getBackendView($model, $template);
         }
 
-        return parent::generate();
+        if ($model->hofff_toc_source === '') {
+            $items = $this->navigationBuilder->fromParent(
+                $model->ptable,
+                (int) $model->pid,
+                (int) $model->hofff_toc_min_level,
+                (int) $model->hofff_toc_max_level,
+                (bool) $model->hofff_toc_force_request_uri,
+            );
+        } elseif (is_numeric($model->hofff_toc_source)) {
+            $items = $model->navigationBuilder->fromArticle(
+                (int) $model->hofff_toc_source,
+                (int) $model->hofff_toc_min_level,
+                (int) $model->hofff_toc_max_level,
+                (bool) $model->hofff_toc_force_request_uri,
+            );
+        } else {
+            $items = $this->navigationBuilder->fromColumn(
+                (int) $GLOBALS['objPage']->id,
+                $model->hofff_toc_source,
+                (int) $model->hofff_toc_min_level,
+                (int) $model->hofff_toc_max_level,
+                (bool) $model->hofff_toc_force_request_uri,
+            );
+        }
+
+        $template->items          = $this->parseItems($items);
+        $template->request        = Environment::get('indexFreeRequest');
+        $template->skipId         = 'skipNavigation' . $model->id;
+        $template->skipNavigation = StringUtil::specialchars(
+            $this->translator->trans('MSC.skipNavigation', [], 'contao_default'),
+        );
+
+        return $template->getResponse();
     }
 
     /** @param list<array<string,mixed>> $items */
@@ -94,37 +104,26 @@ final class ContentNavigationElement extends ContentElement
         return $tpl->parse();
     }
 
-    /** @SuppressWarnings(PHPMD.Superglobals) */
-    protected function compile(): void
+    private function getBackendView(ContentModel $model, Template $frontendTemplate): Response
     {
-        if ($this->hofff_toc_source === '') {
-            $arrItems = $this->navigationBuilder->fromParent(
-                $this->ptable,
-                (int) $this->pid,
-                (int) $this->hofff_toc_min_level,
-                (int) $this->hofff_toc_max_level,
-                (bool) $this->hofff_toc_force_request_uri
-            );
-        } elseif (is_numeric($this->hofff_toc_source)) {
-            $arrItems = $this->navigationBuilder->fromArticle(
-                (int) $this->hofff_toc_source,
-                (int) $this->hofff_toc_min_level,
-                (int) $this->hofff_toc_max_level,
-                (bool) $this->hofff_toc_force_request_uri
-            );
-        } else {
-            $arrItems = $this->navigationBuilder->fromColumn(
-                (int) $GLOBALS['objPage']->id,
-                $this->hofff_toc_source,
-                (int) $this->hofff_toc_min_level,
-                (int) $this->hofff_toc_max_level,
-                (bool) $this->hofff_toc_force_request_uri
-            );
-        }
+        $template           = new BackendTemplate('be_wildcard');
+        $template->wildcard = '### '
+            . $this->translator->trans('CTE.' . $model->type . '.1', [], 'contao_tl_content')
+            . ' ###';
+        $template->title    = $frontendTemplate->headline;
+        $template->id       = $model->id;
+        $template->link     = $this->translator->trans('CTE.' . $model->type . '.0', [], 'contao_tl_content');
+        $template->href     = $this->router->generate(
+            'contao_backend',
+            [
+                'do'    => Input::get('do'),
+                'table' => 'tl_content',
+                'act'   => 'edit',
+                'id'    => $model->id,
+                'rt'    => $this->csrfTokenManager->getDefaultTokenValue(),
+            ],
+        );
 
-        $this->Template->items          = $this->parseItems($arrItems);
-        $this->Template->request        = Environment::get('indexFreeRequest');
-        $this->Template->skipId         = 'skipNavigation' . $this->id;
-        $this->Template->skipNavigation = StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['skipNavigation']);
+        return $template->getResponse();
     }
 }

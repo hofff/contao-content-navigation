@@ -7,17 +7,19 @@ namespace Hofff\Contao\ContentNavigation\EventListener\Dca;
 use Ausi\SlugGenerator\SlugGenerator;
 use Contao\Backend;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\DataContainer;
 use Contao\LayoutModel;
 use Contao\StringUtil;
 use Doctrine\DBAL\Connection;
 use Hofff\Contao\ContentNavigation\Navigation\Query\ArticlePageQuery;
-use Patchwork\Utf8;
+use Symfony\Component\String\UnicodeString;
 
 use function assert;
 use function html_entity_decode;
 use function is_array;
 use function is_numeric;
+use function is_object;
 use function sprintf;
 use function trim;
 
@@ -25,30 +27,15 @@ use const ENT_QUOTES;
 
 final class ContentDcaListener
 {
-    /**
-     * Database connection.
-     *
-     * @var Connection
-     */
-    private $connection;
-
-    /** @var ArticlePageQuery */
-    private $articlePageQuery;
-
-    /** @var SlugGenerator */
-    private $cssIdGenerator;
-
     public function __construct(
-        Connection $connection,
-        ArticlePageQuery $articlePageQuery,
-        SlugGenerator $cssIdGenerator
+        private readonly Connection $connection,
+        private readonly ArticlePageQuery $articlePageQuery,
+        private readonly SlugGenerator $cssIdGenerator,
     ) {
-        $this->connection       = $connection;
-        $this->articlePageQuery = $articlePageQuery;
-        $this->cssIdGenerator   = $cssIdGenerator;
     }
 
     /** @SuppressWarnings(PHPMD.Superglobals) */
+    #[AsCallback('tl_content', 'config.onload')]
     public function adjustPalettes(): void
     {
         if (
@@ -77,6 +64,7 @@ final class ContentDcaListener
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
+    #[AsCallback('tl_content', 'fields.hofff_toc_source.options')]
     public function sourceOptions(DataContainer $dataContainer): array
     {
         if (
@@ -88,36 +76,34 @@ final class ContentDcaListener
 
         return [
             (string) $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_column'] => $this->activeSections(
-                (int) $dataContainer->activeRecord->pid
+                (int) $dataContainer->activeRecord->pid,
             ),
             (string) $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_page']   => $this->pageArticles(
-                (int) $dataContainer->id
+                (int) $dataContainer->id,
             ),
         ];
     }
 
     /**
-     * @param mixed $value
-     *
      * @return array{0:string|null, 1:string|null}
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function generateCssId($value, ?DataContainer $dataContainer): array
+    #[AsCallback('tl_content', 'fields.cssID.save')]
+    public function generateCssId(mixed $value, DataContainer|null $dataContainer): array
     {
         $value = StringUtil::deserialize($value, true);
 
+        /** @psalm-suppress RiskyTruthyFalsyComparison */
         if (
-            $dataContainer === null
-            || ! $dataContainer->activeRecord
-            || ! $dataContainer->activeRecord->hofff_toc_include
+            $dataContainer?->activeRecord?->hofff_toc_include
             || $value[0]
         ) {
             return $value;
         }
 
-        // Psalm does not understand the if condition above
-        assert($dataContainer !== null && $dataContainer->activeRecord !== null);
+        /** @psalm-suppress PossiblyNullPropertyFetch */
+        assert(is_object($dataContainer->activeRecord));
 
         $headline = StringUtil::deserialize($dataContainer->activeRecord->headline, true);
         if (! $headline['value']) {
@@ -133,7 +119,7 @@ final class ContentDcaListener
             $cssId = 'id-' . $cssId;
         }
 
-        $value[0] = Utf8::strtolower(trim($cssId, '-'));
+        $value[0] = (new UnicodeString(trim($cssId, '-')))->lower()->toString();
 
         return $value;
     }
@@ -142,6 +128,8 @@ final class ContentDcaListener
      * @return list<string>
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @psalm-suppress MoreSpecificReturnType
+     * @psalm-suppress LessSpecificReturnStatement
      */
     private function activeSections(int $articleId): array
     {
@@ -236,7 +224,7 @@ final class ContentDcaListener
 				c.id = :id
 			ORDER BY
 				a.inColumn,
-				a.sorting'
+				a.sorting',
         );
 
         $statement->bindValue('id', $contentId);
@@ -247,19 +235,15 @@ final class ContentDcaListener
             $articles[$row->id] = sprintf(
                 '%s [%s]',
                 $row->title,
-                $GLOBALS['TL_LANG']['COLS'][$row->inColumn] ?? $row->inColumn
+                $GLOBALS['TL_LANG']['COLS'][$row->inColumn] ?? $row->inColumn,
             );
         }
 
         return $articles;
     }
 
-    /**
-     * @param object|LayoutModel $layout
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
-    private function registerSectionLabels($layout): void
+    /** @SuppressWarnings(PHPMD.Superglobals) */
+    private function registerSectionLabels(object $layout): void
     {
         foreach (StringUtil::deserialize($layout->sections, true) as $section) {
             if (isset($GLOBALS['TL_LANG']['COLS'][$section['id']])) {

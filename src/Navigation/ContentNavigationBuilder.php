@@ -2,10 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * Contao Content Navigation
- */
-
 namespace Hofff\Contao\ContentNavigation\Navigation;
 
 use Contao\Environment;
@@ -20,27 +16,15 @@ use function substr;
 
 final class ContentNavigationBuilder
 {
-    /** @var RelatedPages */
-    private $relatedPages;
-
-    /** @var Query\ItemsInParentQuery */
-    private $itemsInParentQuery;
-
-    /** @var Query\ItemsInColumnQuery */
-    private $itemsInColumnQuery;
-
     public function __construct(
-        RelatedPages $relatedPages,
-        Query\ItemsInColumnQuery $itemsInColumnQuery,
-        Query\ItemsInParentQuery $itemsInParentQuery
+        private readonly RelatedPages $relatedPages,
+        private readonly Query\ItemsInColumnQuery $itemsInColumnQuery,
+        private readonly Query\ItemsInParentQuery $itemsInParentQuery,
     ) {
-        $this->relatedPages       = $relatedPages;
-        $this->itemsInColumnQuery = $itemsInColumnQuery;
-        $this->itemsInParentQuery = $itemsInParentQuery;
     }
 
     /**
-     * Collect the headings from content elements and return an structured array of headings.
+     * Collect the headings from content elements and return a structured array of headings.
      *
      * @param list<object> $result          $result The database result of content elements.
      * @param int          $minLevel        Min navigation level.
@@ -53,15 +37,21 @@ final class ContentNavigationBuilder
      * @SuppressWarnings(PHPMD.Superglobals)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @psalm-suppress MoreSpecificReturnType
+     * @psalm-suppress LessSpecificReturnStatement
      */
     private function collect(
         array &$result,
         int $minLevel = 1,
         int $maxLevel = 6,
         int $currentLevel = 1,
-        bool $forceRequestUri = false
+        bool $forceRequestUri = false,
     ): array {
         $items = [];
+
+        if ($result === []) {
+            return [];
+        }
 
         do {
             $item = current($result);
@@ -89,9 +79,10 @@ final class ContentNavigationBuilder
                 // go down if the level should be collected
                 if ($level <= $maxLevel) {
                     $subItems = $this->collect($result, $minLevel, $maxLevel, $currentLevel + 1, $forceRequestUri);
+                    $count    = count($items);
 
-                    if (count($items)) {
-                        $items[count($items) - 1]['subitems'] = $subItems;
+                    if ($count > 0) {
+                        $items[$count - 1]['subitems'] = $subItems;
                     } else {
                         $items = $subItems;
                     }
@@ -146,7 +137,7 @@ final class ContentNavigationBuilder
                     [
                         'title' => $headline['value'],
                         'href'  => $pageUrl . '#' . $cssId[0],
-                    ]
+                    ],
                 );
                 $items[] = $arrItem;
             }
@@ -171,7 +162,7 @@ final class ContentNavigationBuilder
         int $parentId,
         int $minLevel = 1,
         int $maxLevel = 6,
-        bool $forceRequestUri = false
+        bool $forceRequestUri = false,
     ): array {
         $result = ($this->itemsInParentQuery)($parentTable, $parentId);
 
@@ -192,7 +183,7 @@ final class ContentNavigationBuilder
         int $articleId,
         int $minLevel = 1,
         int $maxLevel = 6,
-        bool $forceRequestUri = false
+        bool $forceRequestUri = false,
     ): array {
         return $this->fromParent('tl_article', $articleId, $minLevel, $maxLevel, $forceRequestUri);
     }
@@ -213,7 +204,7 @@ final class ContentNavigationBuilder
         string $column = 'main',
         int $minLevel = 1,
         int $maxLevel = 6,
-        bool $forceRequestUri = false
+        bool $forceRequestUri = false,
     ): array {
         $result = ($this->itemsInColumnQuery)($pageId, $column);
 

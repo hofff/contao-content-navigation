@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Hofff\Contao\ContentNavigation\Navigation\Query;
 
 use function array_map;
-use function is_int;
 
 final class ItemsInParentQuery extends AbstractItemQuery
 {
@@ -33,16 +32,13 @@ final class ItemsInParentQuery extends AbstractItemQuery
 
         $this->addPublishedCondition($builder);
 
-        $result = $builder->execute();
-        if (is_int($result)) {
-            return [];
-        }
+        $result = $builder->executeQuery();
 
         return array_map(
             static function (array $row): object {
                 return (object) $row;
             },
-            $result->fetchAllAssociative()
+            $result->fetchAllAssociative(),
         );
     }
 }

@@ -12,43 +12,23 @@ use function array_key_exists;
 
 final class RelatedPages
 {
-    /** @var ArticlePageQuery */
-    private $articlePageQuery;
-
-    /** @var JumpToPageQuery */
-    private $jumpToPageQuery;
-
     /** @var array<string,array<int,PageModel|null>> */
-    private $cache = [];
+    private array $cache = [];
 
-    /**
-     * Mapping between table and ptable for jump to relations.
-     *
-     * @var array<string,string>
-     */
-    private $jumpToMapping;
-
-    /**
-     * @param array<string,string> $jumpToMapping
-     */
+    /** @param array<string,string> $jumpToMapping */
     public function __construct(
-        ArticlePageQuery $articlePageQuery,
-        JumpToPageQuery $jumpToPageQuery,
-        array $jumpToMapping
+        private readonly ArticlePageQuery $articlePageQuery,
+        private readonly JumpToPageQuery $jumpToPageQuery,
+        private readonly array $jumpToMapping,
     ) {
-        $this->articlePageQuery = $articlePageQuery;
-        $this->jumpToPageQuery  = $jumpToPageQuery;
-        $this->jumpToMapping    = $jumpToMapping;
     }
 
     /**
      * Get related page for a given item.
      *
-     * @param object $item
-     *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function ofItem($item): ?PageModel
+    public function ofItem(object $item): PageModel|null
     {
         $parentId = (int) $item->pid;
 
@@ -56,19 +36,16 @@ final class RelatedPages
             return $this->getJumpToPage($parentId, $item->ptable, $this->jumpToMapping[$item->ptable]);
         }
 
-        switch ($item->ptable) {
-            case '':
-            case 'tl_article':
-                return $this->getArticlePage($parentId);
-        }
-
-        return $GLOBALS['objPage'] ?? null;
+        return match ($item->ptable) {
+            '', 'tl_article' => $this->getArticlePage($parentId),
+            default => $GLOBALS['objPage'] ?? null,
+        };
     }
 
     /**
      * Get article of a page.
      */
-    private function getArticlePage(int $articleId): ?PageModel
+    private function getArticlePage(int $articleId): PageModel|null
     {
         if (! isset($this->cache['tl_article']) || ! array_key_exists($articleId, $this->cache['tl_article'])) {
             $this->cache['tl_article'][$articleId] = ($this->articlePageQuery)($articleId);
@@ -77,7 +54,7 @@ final class RelatedPages
         return $this->cache['tl_article'][$articleId];
     }
 
-    private function getJumpToPage(int $parentId, string $parentTable, string $categoryTable): ?PageModel
+    private function getJumpToPage(int $parentId, string $parentTable, string $categoryTable): PageModel|null
     {
         if (! isset($this->cache[$parentTable]) || ! array_key_exists($parentId, $this->cache[$parentTable])) {
             $this->cache[$parentTable][$parentId] = ($this->jumpToPageQuery)($parentId, $parentTable, $categoryTable);
