@@ -41,7 +41,7 @@ final class ContentNavigationElement extends AbstractContentElementController
     /** @SuppressWarnings(PHPMD.Superglobals) */
     protected function getResponse(Template $template, ContentModel $model, Request $request): Response
     {
-        if (! $this->container->get('contao.routing.scope_matcher')->isBackendRequest($request)) {
+        if ($this->container->get('contao.routing.scope_matcher')->isBackendRequest($request)) {
             return $this->getBackendView($model, $template);
         }
 
