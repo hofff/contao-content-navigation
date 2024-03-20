@@ -96,7 +96,7 @@ final class ContentDcaListener
 
         /** @psalm-suppress RiskyTruthyFalsyComparison */
         if (
-            $dataContainer?->activeRecord?->hofff_toc_include
+            ! $dataContainer?->activeRecord?->hofff_toc_include
             || $value[0]
         ) {
             return $value;
