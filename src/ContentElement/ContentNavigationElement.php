@@ -54,7 +54,7 @@ final class ContentNavigationElement extends AbstractContentElementController
                 (bool) $model->hofff_toc_force_request_uri,
             );
         } elseif (is_numeric($model->hofff_toc_source)) {
-            $items = $model->navigationBuilder->fromArticle(
+            $items = $this->navigationBuilder->fromArticle(
                 (int) $model->hofff_toc_source,
                 (int) $model->hofff_toc_min_level,
                 (int) $model->hofff_toc_max_level,
