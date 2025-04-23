@@ -8,8 +8,10 @@ use Contao\Environment;
 use Contao\StringUtil;
 
 use function array_merge;
+use function assert;
 use function count;
 use function current;
+use function is_object;
 use function next;
 use function prev;
 use function substr;
@@ -37,6 +39,7 @@ final class ContentNavigationBuilder
      * @SuppressWarnings(PHPMD.Superglobals)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      * @psalm-suppress MoreSpecificReturnType
      * @psalm-suppress LessSpecificReturnStatement
      */
@@ -55,6 +58,7 @@ final class ContentNavigationBuilder
 
         do {
             $item = current($result);
+            assert(is_object($item));
             $page = $this->relatedPages->ofItem($item);
 
             if ($page === null || $page->requireItem) {

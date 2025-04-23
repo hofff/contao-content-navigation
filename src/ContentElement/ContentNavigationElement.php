@@ -15,6 +15,7 @@ use Contao\Input;
 use Contao\StringUtil;
 use Contao\Template;
 use Hofff\Contao\ContentNavigation\Navigation\ContentNavigationBuilder;
+use Override;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
@@ -39,6 +40,7 @@ final class ContentNavigationElement extends AbstractContentElementController
     }
 
     /** @SuppressWarnings(PHPMD.Superglobals) */
+    #[Override]
     protected function getResponse(Template $template, ContentModel $model, Request $request): Response
     {
         if ($this->container->get('contao.routing.scope_matcher')->isBackendRequest($request)) {
