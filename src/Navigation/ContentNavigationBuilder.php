@@ -57,7 +57,7 @@ final class ContentNavigationBuilder
             $item = current($result);
             $page = $this->relatedPages->ofItem($item);
 
-            if ($page === null) {
+            if ($page === null || $page->requireItem) {
                 continue;
             }
 
