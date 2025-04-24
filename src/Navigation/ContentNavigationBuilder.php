@@ -61,7 +61,7 @@ final class ContentNavigationBuilder
             assert(is_object($item));
             $page = $this->relatedPages->ofItem($item);
 
-            if ($page === null || $page->requireItem) {
+            if ($page === null) {
                 continue;
             }
 
@@ -132,9 +132,13 @@ final class ContentNavigationBuilder
                 $items = array_merge(...$merge);
             } else {
                 // add a new item of the same level
-                $pageUrl = $forceRequestUri || $page->id === $GLOBALS['objPage']->id
-                    ? Environment::get('indexFreeRequest')
-                    : $page->getFrontendUrl();
+                if ($forceRequestUri || $page->id === $GLOBALS['objPage']->id) {
+                    $pageUrl = Environment::get('indexFreeRequest');
+                } elseif (! $page->requireItem) {
+                    $pageUrl = $page->getFrontendUrl();
+                } else {
+                    continue;
+                }
 
                 $arrItem = array_merge(
                     (array) $item,
