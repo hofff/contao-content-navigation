@@ -8,13 +8,15 @@ This extension was previously published as *ce_navigation* and maintained by Tri
 
 ## Requirements
 
- - Contao: ^4.9
- - PHP: ^7.1 || ^8.0
+ - Contao: ^5.3
+ - PHP: ^8.1
  
 ## Usage
 
  - Create a content element "Table of contents" and define the source
  - Active option "Include in table of contents" for each content element
+ - Optionally define a short title, which is used in the navigation and for the generated CSS ID
+   instead of the headline
 
 Now you get an content navigation for each element marked as included and having a headline.
 

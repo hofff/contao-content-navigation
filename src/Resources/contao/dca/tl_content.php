@@ -54,8 +54,17 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_include'] = [
     'inputType' => 'checkbox',
     'exclude'   => true,
     'filter'    => true,
-    'eval'      => ['tl_class' => 'clr w50'],
+    'eval'      => ['submitOnChange' => true, 'tl_class' => 'clr w50 cbx m12'],
     'sql'       => 'char(1) NOT NULL default \'\'',
+];
+
+$GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_title'] = [
+    'label'     => &$GLOBALS['TL_LANG']['tl_content']['hofff_toc_title'],
+    'inputType' => 'text',
+    'exclude'   => true,
+    'search'    => true,
+    'eval'      => ['maxlength' => 255, 'tl_class' => 'w50'],
+    'sql'       => 'varchar(255) NOT NULL default \'\'',
 ];
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['hofff_toc_force_request_uri'] = [
