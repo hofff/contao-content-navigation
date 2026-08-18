@@ -143,8 +143,9 @@ final class ContentNavigationBuilder
                 $arrItem = array_merge(
                     (array) $item,
                     [
-                        'title' => $headline['value'],
-                        'href'  => $pageUrl . '#' . $cssId[0],
+                        'title'  => $headline['value'],
+                        'anchor' => $cssId[0],
+                        'href'   => $pageUrl . '#' . $cssId[0],
                     ],
                 );
                 $items[] = $arrItem;

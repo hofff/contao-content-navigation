@@ -23,6 +23,32 @@ You can define the source for the table of content structure depending where the
  - Article: Column, Specific article or parent element (current article)
  - News: Parent element (news)
  - Event: Parent element (event)
+
+## Foldable navigation
+
+Select the template `hofff_content_nav_foldable` in the *Navigation template* field to make the sub
+levels foldable. Every entry having children gets a toggle button, which can be operated with mouse
+and keyboard and carries the according `aria-expanded`, `aria-controls` and `aria-label` attributes.
+
+The navigation is rendered expanded and is collapsed by the script afterwards, so that all entries
+remain reachable without JavaScript. When the page is opened with an anchor, the ancestors of the
+linked entry are expanded and the entry is marked with the class `toc-current`. Each entry carries
+its anchor in `data-toc-id`.
+
+The required assets are registered automatically for templates whose name starts with
+`hofff_content_nav_foldable`, so custom copies keeping that prefix are covered as well. Templates
+named differently have to add `bundles/hofffcontentnavigation/foldable.js` and `foldable.css`
+themselves.
+
+The shipped stylesheet only indents the sub levels and draws the caret. Styling beyond that is left
+to the theme, the following hooks are available:
+
+| | |
+|---|---|
+| `.toc-toggle` | the toggle button, `aria-expanded` reflects the state |
+| `.toc-has-children` | entry having sub items |
+| `.toc-expanded` | entry whose sub items are currently visible |
+| `.toc-current` | entry the current anchor points to |
  - FAQ: Parent element (FAQ entry)
  
 ## Customization

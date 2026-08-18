@@ -13,3 +13,6 @@ $GLOBALS['TL_LANG']['CTE']['hofff_content_navigation'] = [
     'Table of contents',
     'Creates a navigation over all content elements with heading and CSS ID.',
 ];
+
+$GLOBALS['TL_LANG']['MSC']['hofff_toc_expand']   = 'Show sub items of “%s”';
+$GLOBALS['TL_LANG']['MSC']['hofff_toc_collapse'] = 'Hide sub items of “%s”';

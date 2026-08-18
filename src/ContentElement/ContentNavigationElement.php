@@ -23,6 +23,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function count;
 use function is_numeric;
+use function str_starts_with;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -31,6 +32,12 @@ use function is_numeric;
 #[AsContentElement('hofff_content_navigation', 'links', 'ce_hofff_content_navigation')]
 final class ContentNavigationElement extends AbstractContentElementController
 {
+    private const DEFAULT_NAVIGATION_TEMPLATE = 'hofff_content_nav_default';
+
+    private const FOLDABLE_NAVIGATION_TEMPLATE = 'hofff_content_nav_foldable';
+
+    private const ASSET_PATH = 'bundles/hofffcontentnavigation';
+
     public function __construct(
         private readonly ContentNavigationBuilder $navigationBuilder,
         private readonly RouterInterface $router,
@@ -72,7 +79,11 @@ final class ContentNavigationElement extends AbstractContentElementController
             );
         }
 
-        $template->items          = $this->parseItems($items);
+        $navigationTemplate = (string) $model->hofff_toc_nav_tpl ?: self::DEFAULT_NAVIGATION_TEMPLATE;
+
+        $this->registerAssets($navigationTemplate);
+
+        $template->items          = $this->parseItems($items, $navigationTemplate);
         $template->request        = Environment::get('indexFreeRequest');
         $template->skipId         = 'skipNavigation' . $model->id;
         $template->skipNavigation = StringUtil::specialchars(
@@ -83,7 +94,7 @@ final class ContentNavigationElement extends AbstractContentElementController
     }
 
     /** @param list<array<string,mixed>> $items */
-    private function parseItems(array $items, int $level = 1): string
+    private function parseItems(array $items, string $templateName, int $level = 1): string
     {
         if (! count($items)) {
             return '';
@@ -91,7 +102,7 @@ final class ContentNavigationElement extends AbstractContentElementController
 
         foreach ($items as &$item) {
             if (isset($item['subitems'])) {
-                $item['subitems'] = $this->parseItems($item['subitems'], $level + 1);
+                $item['subitems'] = $this->parseItems($item['subitems'], $templateName, $level + 1);
             }
 
             $item['class'] = '';
@@ -100,10 +111,33 @@ final class ContentNavigationElement extends AbstractContentElementController
         $items[0]['class']                 = 'first';
         $items[count($items) - 1]['class'] = 'last';
 
-        $tpl = new FrontendTemplate('hofff_content_nav_default');
-        $tpl->setData(['items' => $items, 'level' => $level]);
+        $tpl = new FrontendTemplate($templateName);
+        $tpl->setData([
+            'items'         => $items,
+            'level'         => $level,
+            'expandLabel'   => $this->translator->trans('MSC.hofff_toc_expand', [], 'contao_default'),
+            'collapseLabel' => $this->translator->trans('MSC.hofff_toc_collapse', [], 'contao_default'),
+        ]);
 
         return $tpl->parse();
+    }
+
+    /**
+     * Register the assets required to fold the navigation.
+     *
+     * Templates derived from the foldable one keep its prefix, so that customized copies are covered
+     * as well. Templates named differently have to take care of the assets themselves.
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
+    private function registerAssets(string $templateName): void
+    {
+        if (! str_starts_with($templateName, self::FOLDABLE_NAVIGATION_TEMPLATE)) {
+            return;
+        }
+
+        $GLOBALS['TL_JAVASCRIPT'][self::FOLDABLE_NAVIGATION_TEMPLATE] = self::ASSET_PATH . '/foldable.js|static';
+        $GLOBALS['TL_CSS'][self::FOLDABLE_NAVIGATION_TEMPLATE]        = self::ASSET_PATH . '/foldable.css|static';
     }
 
     private function getBackendView(ContentModel $model, Template $frontendTemplate): Response

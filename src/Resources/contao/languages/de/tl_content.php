@@ -16,6 +16,7 @@ $GLOBALS['TL_LANG']['tl_content']['hofff_toc_min_level']         = ['Start Level
 $GLOBALS['TL_LANG']['tl_content']['hofff_toc_max_level']         = ['Stopp Level', 'Bei dieser Überschriftenebene aufhören (inklusive).'];
 $GLOBALS['TL_LANG']['tl_content']['hofff_toc_include']           = ['In Inhaltsnavigation aufnehmen', 'Element wird in der Inhaltsnavigation aufgenommen, soweit eine Überschrift definiert ist. Falls keine CSS-ID vorhanden ist, wird diese automatisch generiert.'];
 $GLOBALS['TL_LANG']['tl_content']['hofff_toc_force_request_uri'] = ['Request URI verwenden', 'Immer aktuelle Request URI anstelle der verknüpften Seite verwenden.'];
+$GLOBALS['TL_LANG']['tl_content']['hofff_toc_nav_tpl']           = ['Navigations-Template', 'Template für die Navigationsliste. Mit "hofff_content_nav_foldable" lassen sich Unterebenen auf- und zuklappen.'];
 
 $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_column'] = 'Artikel in Spalte';
 $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_page']   = 'Artikel in Seite';
