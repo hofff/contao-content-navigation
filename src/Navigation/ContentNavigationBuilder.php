@@ -15,6 +15,7 @@ use function is_object;
 use function next;
 use function prev;
 use function substr;
+use function trim;
 
 final class ContentNavigationBuilder
 {
@@ -143,7 +144,7 @@ final class ContentNavigationBuilder
                 $arrItem = array_merge(
                     (array) $item,
                     [
-                        'title' => $headline['value'],
+                        'title' => $this->navigationTitle($item, $headline),
                         'href'  => $pageUrl . '#' . $cssId[0],
                     ],
                 );
@@ -152,6 +153,25 @@ final class ContentNavigationBuilder
         } while (next($result));
 
         return $items;
+    }
+
+    /**
+     * Determine the title being rendered in the navigation.
+     *
+     * The optional short title takes precedence over the headline of the content element.
+     *
+     * @param object              $item     The content element.
+     * @param array<string,mixed> $headline The deserialized headline of the content element.
+     */
+    private function navigationTitle(object $item, array $headline): string
+    {
+        $title = trim((string) ($item->hofff_toc_title ?? ''));
+
+        if ($title !== '') {
+            return $title;
+        }
+
+        return (string) $headline['value'];
     }
 
     /**

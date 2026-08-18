@@ -23,11 +23,6 @@
                 <referencedMethod name="Contao\PageModel::getFrontendUrl"/>
             </errorLevel>
         </DeprecatedMethod>
-        <UndefinedMagicPropertyFetch>
-            <errorLevel type="suppress">
-                <referencedProperty name="Contao\DataContainer::$activeRecord"/>
-            </errorLevel>
-        </UndefinedMagicPropertyFetch>
     </issueHandlers>
 
     <universalObjectCrates>

@@ -9,17 +9,17 @@ use Contao\Backend;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsCallback;
 use Contao\DataContainer;
+use Contao\DC_Table;
+use Contao\Input;
 use Contao\LayoutModel;
 use Contao\StringUtil;
 use Doctrine\DBAL\Connection;
 use Hofff\Contao\ContentNavigation\Navigation\Query\ArticlePageQuery;
 use Symfony\Component\String\UnicodeString;
 
-use function assert;
 use function html_entity_decode;
 use function is_array;
 use function is_numeric;
-use function is_object;
 use function sprintf;
 use function trim;
 
@@ -36,7 +36,7 @@ final class ContentDcaListener
 
     /** @SuppressWarnings(PHPMD.Superglobals) */
     #[AsCallback('tl_content', 'config.onload')]
-    public function adjustPalettes(): void
+    public function adjustPalettes(DataContainer|null $dataContainer = null): void
     {
         if (
             ! isset($GLOBALS['TL_DCA']['tl_content']['palettes'])
@@ -48,6 +48,13 @@ final class ContentDcaListener
         $manipulator = PaletteManipulator::create()
             ->addField('hofff_toc_include', 'cssID', PaletteManipulator::POSITION_BEFORE);
 
+        // The short title is added to the palette instead of being registered as a subpalette, because
+        // Contao renders subpalettes in a container of their own, which prevents the field from being
+        // displayed next to the checkbox.
+        if ($this->isIncludedInNavigation($dataContainer)) {
+            $manipulator->addField('hofff_toc_title', 'hofff_toc_include', PaletteManipulator::POSITION_AFTER);
+        }
+
         foreach ($GLOBALS['TL_DCA']['tl_content']['palettes'] as $name => $config) {
             if (is_array($config)) {
                 continue;
@@ -55,6 +62,30 @@ final class ContentDcaListener
 
             $manipulator->applyToPalette($name, 'tl_content');
         }
+    }
+
+    /** Determine if the content element being edited is included in the content navigation. */
+    private function isIncludedInNavigation(DataContainer|null $dataContainer): bool
+    {
+        if ($dataContainer === null) {
+            return false;
+        }
+
+        $act = Input::get('act');
+
+        // The palette is generated once for all records when editing multiple elements, so the field
+        // has to be offered independently of the value of a single record.
+        if ($act === 'editAll' || $act === 'overrideAll') {
+            return true;
+        }
+
+        if ($act !== 'edit') {
+            return false;
+        }
+
+        $currentRecord = $dataContainer->getCurrentRecord();
+
+        return (bool) ($currentRecord['hofff_toc_include'] ?? false);
     }
 
     /**
@@ -67,16 +98,18 @@ final class ContentDcaListener
     #[AsCallback('tl_content', 'fields.hofff_toc_source.options')]
     public function sourceOptions(DataContainer $dataContainer): array
     {
+        $currentRecord = $dataContainer->getCurrentRecord();
+
         if (
             $GLOBALS['TL_DCA']['tl_content']['config']['ptable'] !== 'tl_article'
-            || $dataContainer->activeRecord === null
+            || $currentRecord === null
         ) {
             return [];
         }
 
         return [
             (string) $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_column'] => $this->activeSections(
-                (int) $dataContainer->activeRecord->pid,
+                (int) $currentRecord['pid'],
             ),
             (string) $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_page']   => $this->pageArticles(
                 (int) $dataContainer->id,
@@ -94,23 +127,33 @@ final class ContentDcaListener
     {
         $value = StringUtil::deserialize($value, true);
 
+        // DC_Table::getActiveRecord() is used instead of DataContainer::getCurrentRecord(), because it
+        // also contains the values submitted in the running save cycle. The headline and the checkbox
+        // are saved before the CSS ID, while the record itself is not updated until all save callbacks
+        // have been run.
+        $activeRecord = $dataContainer instanceof DC_Table ? $dataContainer->getActiveRecord() : null;
+
         /** @psalm-suppress RiskyTruthyFalsyComparison */
         if (
-            ! $dataContainer?->activeRecord?->hofff_toc_include
+            ! ($activeRecord['hofff_toc_include'] ?? null)
             || $value[0]
         ) {
             return $value;
         }
 
-        /** @psalm-suppress PossiblyNullPropertyFetch */
-        assert(is_object($dataContainer->activeRecord));
+        // The CSS ID is generated from what is being displayed in the navigation, hence the short
+        // title takes precedence over the headline here as well.
+        $cssId = trim((string) ($activeRecord['hofff_toc_title'] ?? ''));
 
-        $headline = StringUtil::deserialize($dataContainer->activeRecord->headline, true);
-        if (! $headline['value']) {
+        if ($cssId === '') {
+            $headline = StringUtil::deserialize($activeRecord['headline'] ?? null, true);
+            $cssId    = trim((string) ($headline['value'] ?? ''));
+        }
+
+        if ($cssId === '') {
             return $value;
         }
 
-        $cssId = $headline['value'];
         $cssId = html_entity_decode($cssId, ENT_QUOTES, $GLOBALS['TL_CONFIG']['characterSet']);
         $cssId = StringUtil::stripInsertTags($cssId);
         $cssId = $this->cssIdGenerator->generate($cssId);
