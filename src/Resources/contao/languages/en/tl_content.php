@@ -16,6 +16,7 @@ $GLOBALS['TL_LANG']['tl_content']['hofff_toc_min_level']         = ['Start level
 $GLOBALS['TL_LANG']['tl_content']['hofff_toc_max_level']         = ['Stop level', 'Stop at this headline level (inclusive).'];
 $GLOBALS['TL_LANG']['tl_content']['hofff_toc_include']           = ['Include in content navigation', 'Element will be included in the content navigation if a headline is defined. If there is no CSS ID, it will be generated automatically.'];
 $GLOBALS['TL_LANG']['tl_content']['hofff_toc_force_request_uri'] = ['Force request uri', 'Use current request uri as base link instead of related page'];
+$GLOBALS['TL_LANG']['tl_content']['hofff_toc_nav_tpl']           = ['Navigation template', 'Template of the navigation list itself. Choose "hofff_content_nav_foldable" to make the sub levels foldable.'];
 $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_column']     = 'Article in column';
 $GLOBALS['TL_LANG']['tl_content']['hofff_toc_source_page']       = 'Article in page';
 

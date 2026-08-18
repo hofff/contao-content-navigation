@@ -58,6 +58,17 @@ final class ContentDcaListener
     }
 
     /**
+     * Return the templates being available for rendering the navigation itself.
+     *
+     * @return array<string|int,string>
+     */
+    #[AsCallback('tl_content', 'fields.hofff_toc_nav_tpl.options')]
+    public function navigationTemplateOptions(): array
+    {
+        return Backend::getTemplateGroup('hofff_content_nav_');
+    }
+
+    /**
      * Return all content elements as array.
      *
      * @return array<string, array<string|int,string>>
